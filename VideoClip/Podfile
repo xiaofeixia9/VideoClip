@@ -1,5 +1,5 @@
 
 target 'VideoClip' do
-pod 'Masonry'
-pod 'BlocksKit'
+    pod 'Masonry'
+    pod 'BlocksKit'
 end

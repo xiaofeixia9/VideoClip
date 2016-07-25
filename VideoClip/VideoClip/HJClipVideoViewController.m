@@ -8,6 +8,7 @@
 
 #import "HJClipVideoViewController.h"
 #import <AVFoundation/AVFoundation.h>
+#import <Masonry.h>
 
 @interface HJClipVideoViewController ()
 
@@ -38,10 +39,38 @@
 
 - (void)setUpView
 {
-    // 添加自定义navigationbar
+    [self setUpNavBar];
+    
+}
+
+/** 添加自定义navigationbar */
+- (void)setUpNavBar
+{
     UIView *navBar = [UIView new];
     navBar.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:navBar];
+    [navBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.mas_equalTo(0);
+        make.height.mas_equalTo(64);
+    }];
+    
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setTitle:@"返回" forState:UIControlStateNormal];
+    [backBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [navBar addSubview:backBtn];
+    [backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(navBar.mas_centerY);
+        make.left.mas_equalTo(10);
+    }];
+    
+    UIButton *nextBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [nextBtn setTitle:@"Next" forState:UIControlStateNormal];
+    [nextBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [navBar addSubview:nextBtn];
+    [nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(navBar.mas_centerY);
+        make.right.mas_equalTo(-10);
+    }];
 }
 
 - (void)setUpData
