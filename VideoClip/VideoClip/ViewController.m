@@ -87,7 +87,6 @@ static NSString * const ID = @"video";
         
         [assetsGroup enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
             
-            NSLog(@"%@, %ld", result, index);
             if (result) {
                 [self.videosArray addObject:result];
             } else {
@@ -116,7 +115,11 @@ static NSString * const ID = @"video";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    ALAsset *asset = self.videosArray[indexPath.item];
     
+    HJClipVideoViewController *videoVC = [[HJClipVideoViewController alloc] initClipVideoVCWithAsset:asset];
+    
+    [self presentViewController:videoVC animated:YES completion:nil];
 }
 
 #pragma mark - 懒加载

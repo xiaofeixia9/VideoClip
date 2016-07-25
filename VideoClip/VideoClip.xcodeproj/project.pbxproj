@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */; };
 		B56105E41D432ECB00FFD1BD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E31D432ECB00FFD1BD /* main.m */; };
 		B56105E71D432ECB00FFD1BD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E61D432ECB00FFD1BD /* AppDelegate.m */; };
 		B56105EA1D432ECB00FFD1BD /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E91D432ECB00FFD1BD /* ViewController.m */; };
@@ -38,6 +39,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VideoClip.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		52D1C0BED47F03B5BA90F2ED /* Pods-VideoClip.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.release.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.release.xcconfig"; sourceTree = "<group>"; };
+		A85F529924F3335758CCFCD2 /* Pods-VideoClip.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.debug.xcconfig"; sourceTree = "<group>"; };
 		B56105DF1D432ECB00FFD1BD /* VideoClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B56105E31D432ECB00FFD1BD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B56105E51D432ECB00FFD1BD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -66,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +91,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		720F9A65E6D0D998DF3007B2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A85F529924F3335758CCFCD2 /* Pods-VideoClip.debug.xcconfig */,
+				52D1C0BED47F03B5BA90F2ED /* Pods-VideoClip.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		88A58FB187D2337CA0E22157 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B56105D61D432ECB00FFD1BD = {
 			isa = PBXGroup;
 			children = (
@@ -93,6 +115,8 @@
 				B56105FB1D432ECB00FFD1BD /* VideoClipTests */,
 				B56106061D432ECB00FFD1BD /* VideoClipUITests */,
 				B56105E01D432ECB00FFD1BD /* Products */,
+				720F9A65E6D0D998DF3007B2 /* Pods */,
+				88A58FB187D2337CA0E22157 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -160,9 +184,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B561060C1D432ECB00FFD1BD /* Build configuration list for PBXNativeTarget "VideoClip" */;
 			buildPhases = (
+				004B0EB15441CB7C2CA5D9DE /* [CP] Check Pods Manifest.lock */,
 				B56105DB1D432ECB00FFD1BD /* Sources */,
 				B56105DC1D432ECB00FFD1BD /* Frameworks */,
 				B56105DD1D432ECB00FFD1BD /* Resources */,
+				57687469C4C4C84F3F30BC61 /* [CP] Embed Pods Frameworks */,
+				10815646CE4CA0CD190839DA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -280,6 +307,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		004B0EB15441CB7C2CA5D9DE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		10815646CE4CA0CD190839DA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		57687469C4C4C84F3F30BC61 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B56105DB1D432ECB00FFD1BD /* Sources */ = {
@@ -429,6 +504,7 @@
 		};
 		B561060D1D432ECB00FFD1BD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A85F529924F3335758CCFCD2 /* Pods-VideoClip.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -444,6 +520,7 @@
 		};
 		B561060E1D432ECB00FFD1BD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 52D1C0BED47F03B5BA90F2ED /* Pods-VideoClip.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -522,6 +599,7 @@
 				B561060E1D432ECB00FFD1BD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B561060F1D432ECB00FFD1BD /* Build configuration list for PBXNativeTarget "VideoClipTests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +608,7 @@
 				B56106111D432ECB00FFD1BD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B56106121D432ECB00FFD1BD /* Build configuration list for PBXNativeTarget "VideoClipUITests" */ = {
 			isa = XCConfigurationList;
@@ -538,6 +617,7 @@
 				B56106141D432ECB00FFD1BD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

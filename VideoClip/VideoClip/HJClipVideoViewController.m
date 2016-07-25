@@ -7,31 +7,106 @@
 //
 
 #import "HJClipVideoViewController.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface HJClipVideoViewController ()
+
+@property (nonatomic, strong) ALAsset *sourceAsset;
+@property (nonatomic, strong) AVAsset *avAsset;
+
+@property (nonatomic, strong) AVPlayer *player;
 
 @end
 
 @implementation HJClipVideoViewController
 
+- (instancetype)initClipVideoVCWithAsset:(ALAsset *)asset
+{
+    if (self = [super init]) {
+        _sourceAsset = asset;
+    }
+    
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    [self setUpView];
+    [self setUpData];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)setUpView
+{
+    // 添加自定义navigationbar
+    UIView *navBar = [UIView new];
+    navBar.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:navBar];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)setUpData
+{
+    AVAsset  *avAsset = [[AVURLAsset alloc] initWithURL:self.sourceAsset.defaultRepresentation.url options:nil];
+    
+    NSArray *assetKeysToLoadAndTest = @[@"playable", @"composable", @"tracks", @"duration"];
+    
+    [avAsset loadValuesAsynchronouslyForKeys:assetKeysToLoadAndTest completionHandler:^{
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setUpPlaybackOfAsset:avAsset withKeys:assetKeysToLoadAndTest];
+        });
+    }];
+    
+    self.avAsset = avAsset;
+    
+    self.player = [AVPlayer new];
 }
-*/
+
+- (void)setUpPlaybackOfAsset:(AVAsset *)asset withKeys:(NSArray *)keys
+{
+    // 检查我们需要的key是否被正常加载
+    for (NSString *key in keys) {
+        NSError *error = nil;
+        
+        if ([asset statusOfValueForKey:key error:&error] == AVKeyValueStatusFailed) {
+            [self stopLoadingAnimationAndHandleError:error];
+            return;
+        }
+    }
+    
+    // 视频不可播放
+    if (!asset.isPlayable) {
+        
+        return;
+    }
+    
+    // 视频通道不可用
+    if (!asset.isComposable) {
+        
+        return;
+    }
+    
+    // 代表视频的每个通道长度是否为0
+    if ([asset tracksWithMediaType:AVMediaTypeVideo].count != 0) {
+        
+    } else {
+        
+    }
+}
+
+- (void)stopLoadingAnimationAndHandleError:(NSError *)error
+{
+    // 去除加载动画
+    
+    // 有错误提示的时候，显示错误提示
+    if (error) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[error localizedDescription]
+                                                            message:[error localizedFailureReason]
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"确定"
+                                                  otherButtonTitles:nil];
+        [alertView show];
+    }
+}
 
 @end

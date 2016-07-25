@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @interface HJClipVideoViewController : UIViewController
+
+- (instancetype)initClipVideoVCWithAsset:(ALAsset *)asset;
 
 @end
