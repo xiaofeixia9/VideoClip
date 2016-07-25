@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="video" id="dws-qJ-w8F" customClass="HJVideoChoiceCell">
+            <rect key="frame" x="0.0" y="0.0" width="96" height="95"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="96" height="95"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="5GY-Rg-TpM">
+                        <rect key="frame" x="0.0" y="0.0" width="96" height="95"/>
+                    </imageView>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <constraints>
+                <constraint firstItem="5GY-Rg-TpM" firstAttribute="top" secondItem="dws-qJ-w8F" secondAttribute="top" id="6GN-G1-s7C"/>
+                <constraint firstItem="5GY-Rg-TpM" firstAttribute="leading" secondItem="dws-qJ-w8F" secondAttribute="leading" id="MEF-Mv-brh"/>
+                <constraint firstAttribute="trailing" secondItem="5GY-Rg-TpM" secondAttribute="trailing" id="hzv-88-xIY"/>
+                <constraint firstAttribute="bottom" secondItem="5GY-Rg-TpM" secondAttribute="bottom" id="uOM-TA-jkG"/>
+            </constraints>
+            <size key="customSize" width="96" height="95"/>
+            <connections>
+                <outlet property="imageView" destination="5GY-Rg-TpM" id="BPs-F7-ZbH"/>
+            </connections>
+            <point key="canvasLocation" x="50" y="253.5"/>
+        </collectionViewCell>
+    </objects>
+</document>
