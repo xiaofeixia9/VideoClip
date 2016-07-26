@@ -271,3 +271,12 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 }
 
 @end
+
+
+/**
+ CMTime一个用于描绘多媒体帧数和播放速率的构造体，可以经过 CMTimeMake(int64_t value, int32_t timescale) 来天生一个CMTime变量，第1个参数代表获取第几帧的截图,第2个参数代表每秒的帧数.因此实际截取的时间点是value/timescale。
+ */
+
+/**
+ CMTimeMakeWithSeconds(Float64 seconds, int32_t preferredTimeScale)  第1个参数代表获取第几秒的截图,第2个参数则代表每秒的帧数
+ */
