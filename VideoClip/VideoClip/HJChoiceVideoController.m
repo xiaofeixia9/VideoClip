@@ -6,14 +6,14 @@
 //  Copyright © 2016年 Collion. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "HJChoiceVideoController.h"
 #import "HJVideoChoiceCell.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "HJClipVideoViewController.h"
 
 static NSString * const ID = @"video";
 
-@interface ViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
+@interface HJChoiceVideoController () <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 
@@ -23,7 +23,7 @@ static NSString * const ID = @"video";
 
 @end
 
-@implementation ViewController
+@implementation HJChoiceVideoController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
