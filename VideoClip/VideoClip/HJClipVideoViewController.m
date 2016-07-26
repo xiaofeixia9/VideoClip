@@ -15,9 +15,15 @@
 @property (nonatomic, strong) ALAsset *sourceAsset;
 @property (nonatomic, strong) AVAsset *avAsset;
 
+@property (nonatomic, strong) UIView *navBar;
+@property (nonatomic, strong) UIView *playerView;
 @property (nonatomic, strong) AVPlayer *player;
+@property (nonatomic, strong) AVPlayerLayer *playerLayer;
 
 @end
+
+static void *HJClipVideoStatusContext = &HJClipVideoStatusContext;
+static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
 @implementation HJClipVideoViewController
 
@@ -37,10 +43,11 @@
     [self setUpData];
 }
 
+#pragma mark - 初始化view
 - (void)setUpView
 {
     [self setUpNavBar];
-    
+    [self setUpPlayerView];
 }
 
 /** 添加自定义navigationbar */
@@ -49,6 +56,7 @@
     UIView *navBar = [UIView new];
     navBar.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:navBar];
+    self.navBar = navBar;
     [navBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.mas_equalTo(0);
         make.height.mas_equalTo(64);
@@ -73,6 +81,19 @@
     }];
 }
 
+- (void)setUpPlayerView
+{
+    UIView *playerView = [UIView new];
+    [self.view addSubview:playerView];
+    self.playerView = playerView;
+    [playerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self.navBar.mas_bottom);
+        make.left.right.mas_equalTo(0);
+        make.height.mas_equalTo(400);
+    }];
+}
+
+#pragma mark - 初始化数据
 - (void)setUpData
 {
     AVAsset  *avAsset = [[AVURLAsset alloc] initWithURL:self.sourceAsset.defaultRepresentation.url options:nil];
@@ -89,6 +110,8 @@
     self.avAsset = avAsset;
     
     self.player = [AVPlayer new];
+    
+    [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:HJClipVideoStatusContext];
 }
 
 - (void)setUpPlaybackOfAsset:(AVAsset *)asset withKeys:(NSArray *)keys
@@ -117,10 +140,25 @@
     
     // 代表视频的每个通道长度是否为0
     if ([asset tracksWithMediaType:AVMediaTypeVideo].count != 0) {
+        AVPlayerLayer *newPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:[self player]];
+        [newPlayerLayer setFrame:self.playerView.layer.bounds];
+        [newPlayerLayer setHidden:YES];
+        [self.playerView.layer addSublayer:newPlayerLayer];
+        self.playerLayer = newPlayerLayer;
         
+        [self addObserver:self forKeyPath:@"playerLayer.readyForDisplay" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:HJClipVideoLayerReadyForDisplay];
     } else {
         
     }
+    
+    // 创建一个AVPlayerItem资源 并将AVPlayer替换成创建的资源
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
+    [self.player replaceCurrentItemWithPlayerItem:playerItem];
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self.player play];
 }
 
 - (void)stopLoadingAnimationAndHandleError:(NSError *)error
@@ -135,6 +173,38 @@
                                                   cancelButtonTitle:@"确定"
                                                   otherButtonTitles:nil];
         [alertView show];
+    }
+}
+
+#pragma mark - 监听状态
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if (context == HJClipVideoStatusContext) {
+        
+        AVPlayerStatus status = [change[NSKeyValueChangeNewKey] integerValue];
+        BOOL enable = NO;
+        switch (status) {
+            case AVPlayerItemStatusUnknown:
+                break;
+            case AVPlayerItemStatusReadyToPlay:
+                enable = YES;
+                break;
+            case AVPlayerItemStatusFailed:
+                [self stopLoadingAnimationAndHandleError:[[[self player] currentItem] error]];
+                break;
+        }
+        
+        // 无法播放的时候操作
+    } else if (context == HJClipVideoLayerReadyForDisplay) {
+        
+        if ([change[NSKeyValueChangeNewKey] boolValue] == YES) {
+            // The AVPlayerLayer is ready for display. Hide the loading spinner and show the video.
+            [self stopLoadingAnimationAndHandleError:nil];
+            
+            self.playerLayer.hidden = NO;
+        }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
