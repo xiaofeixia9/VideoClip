@@ -9,6 +9,7 @@
 #import "HJClipVideoViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import <Masonry.h>
+#import <BlocksKit+UIKit.h>
 
 @interface HJClipVideoViewController ()
 
@@ -63,6 +64,9 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     }];
     
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn bk_addEventHandler:^(id sender) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } forControlEvents:UIControlEventTouchUpInside];
     [backBtn setTitle:@"返回" forState:UIControlStateNormal];
     [backBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [navBar addSubview:backBtn];
@@ -198,7 +202,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     } else if (context == HJClipVideoLayerReadyForDisplay) {
         
         if ([change[NSKeyValueChangeNewKey] boolValue] == YES) {
-            // The AVPlayerLayer is ready for display. Hide the loading spinner and show the video.
+            // 装备开始播放
             [self stopLoadingAnimationAndHandleError:nil];
             
             self.playerLayer.hidden = NO;
