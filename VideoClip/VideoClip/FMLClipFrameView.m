@@ -31,24 +31,7 @@ static NSUInteger const FMLLineW = 3;
 {
     if (self = [super init]) {
         _asset = asset;
-    }
-    
-    return self;
-}
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    if (self = [super initWithFrame:frame]) {
-        [self initView];
-        [self initData];
-    }
-    
-    return self;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
-    if (self = [super initWithCoder:aDecoder]) {
+        
         [self initView];
         [self initData];
     }
@@ -90,27 +73,31 @@ static NSUInteger const FMLLineW = 3;
     [imagesView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(startTimeLabel.mas_bottom).offset(15);
         make.height.mas_equalTo(50);
-        make.left.mas_equalTo(FMLLineW);
-        make.right.mas_equalTo(-FMLLineW);
+        make.left.mas_equalTo(3);
+        make.right.mas_equalTo(-3);
     }];
 }
 
 - (void)initData
 {
-    NSUInteger imageCount = 8;
+    NSUInteger imageCount = 9;
     
-    NSMutableArray *array = [NSMutableArray array];
+    __block NSUInteger i = 0;
+    CGFloat imageW = ([UIScreen mainScreen].bounds.size.width - 6) / imageCount;
+    CGFloat imageH = 50;
+    
     [self.asset getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
-        [array addObject:image];
-    }];
-    
-    for (UIImage *image in array) {
+        CGFloat imageX = i * imageW;
+        
         CALayer *imageLayer = [CALayer new];
         imageLayer.contents = (id) image.CGImage;
-        imageLayer.frame = CGRectMake(0, 0, 30, 30);
+        imageLayer.frame = CGRectMake(imageX, 0, imageW, imageH);
         
         [self.imagesView.layer addSublayer:imageLayer];
-    }
+        
+        i++;
+    }];
+    
 }
 
 @end

@@ -23,7 +23,7 @@
     Float64 totalFrames = durationSeconds * fps; //获得视频总帧数
     CMTime timeFrame;
     
-    Float64 perFrames = totalFrames / 8; // 一共切8张图
+    Float64 perFrames = totalFrames / imageCount; // 一共切8张图
     Float64 frame = 0;
     
     while (frame < totalFrames) {
