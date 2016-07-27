@@ -48,7 +48,9 @@
             case AVAssetImageGeneratorSucceeded: {
                 UIImage *displayImage = [UIImage imageWithCGImage:image];
                 
-                !imageBackBlock ? : imageBackBlock(displayImage);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    !imageBackBlock ? : imageBackBlock(displayImage);
+                });
             }
                 break;
         }

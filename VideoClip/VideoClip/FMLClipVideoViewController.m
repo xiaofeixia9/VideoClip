@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Masonry.h>
 #import <BlocksKit+UIKit.h>
+#import "FMLClipFrameView.h"
 
 @interface FMLClipVideoViewController ()
 
@@ -161,9 +162,13 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.player play];
-    });
+    FMLClipFrameView *clipFrameView = [[FMLClipFrameView alloc] initWithAsset:asset];
+    [self.view addSubview:clipFrameView];
+    [clipFrameView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self.playerView.mas_bottom);
+        make.left.right.mas_equalTo(0);
+        make.height.mas_equalTo(122);
+    }];
 }
 
 - (void)stopLoadingAnimationAndHandleError:(NSError *)error

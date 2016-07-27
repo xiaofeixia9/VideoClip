@@ -93,17 +93,24 @@ static NSUInteger const FMLLineW = 3;
         make.left.mas_equalTo(FMLLineW);
         make.right.mas_equalTo(-FMLLineW);
     }];
-    
-    
 }
 
 - (void)initData
 {
     NSUInteger imageCount = 8;
     
+    NSMutableArray *array = [NSMutableArray array];
     [self.asset getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
-        
+        [array addObject:image];
     }];
+    
+    for (UIImage *image in array) {
+        CALayer *imageLayer = [CALayer new];
+        imageLayer.contents = (id) image.CGImage;
+        imageLayer.frame = CGRectMake(0, 0, 30, 30);
+        
+        [self.imagesView.layer addSublayer:imageLayer];
+    }
 }
 
 @end
