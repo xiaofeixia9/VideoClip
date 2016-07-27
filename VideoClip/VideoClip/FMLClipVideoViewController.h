@@ -1,5 +1,5 @@
 //
-//  HJClipVideoViewController.h
+//  FMLClipVideoViewController.h
 //  VideoClip
 //
 //  Created by Collion on 16/7/23.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
-@interface HJClipVideoViewController : UIViewController
+@interface FMLClipVideoViewController : UIViewController
 
 - (instancetype)initClipVideoVCWithAsset:(ALAsset *)asset;
 

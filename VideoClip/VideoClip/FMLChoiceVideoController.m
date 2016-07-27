@@ -1,19 +1,19 @@
 //
-//  ViewController.m
+//  FMLChoiceVideoController.m
 //  VideoClip
 //
 //  Created by Collion on 16/7/23.
 //  Copyright © 2016年 Collion. All rights reserved.
 //
 
-#import "HJChoiceVideoController.h"
-#import "HJVideoChoiceCell.h"
+#import "FMLChoiceVideoController.h"
+#import "FMLVideoChoiceCell.h"
 #import <AssetsLibrary/AssetsLibrary.h>
-#import "HJClipVideoViewController.h"
+#import "FMLClipVideoViewController.h"
 
 static NSString * const ID = @"video";
 
-@interface HJChoiceVideoController () <UICollectionViewDataSource, UICollectionViewDelegate>
+@interface FMLChoiceVideoController () <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 
@@ -23,7 +23,7 @@ static NSString * const ID = @"video";
 
 @end
 
-@implementation HJChoiceVideoController
+@implementation FMLChoiceVideoController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -105,7 +105,7 @@ static NSString * const ID = @"video";
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    HJVideoChoiceCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ID forIndexPath:indexPath];
+    FMLVideoChoiceCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ID forIndexPath:indexPath];
     ALAsset *asset = self.videosArray[indexPath.item];
     
     cell.imageView.image = [UIImage imageWithCGImage:asset.thumbnail];
@@ -117,7 +117,7 @@ static NSString * const ID = @"video";
 {
     ALAsset *asset = self.videosArray[indexPath.item];
     
-    HJClipVideoViewController *videoVC = [[HJClipVideoViewController alloc] initClipVideoVCWithAsset:asset];
+    FMLClipVideoViewController *videoVC = [[FMLClipVideoViewController alloc] initClipVideoVCWithAsset:asset];
     
     [self presentViewController:videoVC animated:YES completion:nil];
 }
@@ -154,7 +154,7 @@ static NSString * const ID = @"video";
         _collectionView.delegate = self;
         
         _collectionView.backgroundColor = [UIColor whiteColor];
-        [_collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([HJVideoChoiceCell class]) bundle:nil] forCellWithReuseIdentifier:ID];
+        [_collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([FMLVideoChoiceCell class]) bundle:nil] forCellWithReuseIdentifier:ID];
     }
     
     return _collectionView;

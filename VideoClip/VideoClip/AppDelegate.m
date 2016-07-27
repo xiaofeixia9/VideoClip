@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "HJChoiceVideoController.h"
+#import "FMLChoiceVideoController.h"
 
 @interface AppDelegate ()
 
@@ -20,7 +20,7 @@
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     
-    HJChoiceVideoController *vc = [HJChoiceVideoController new];
+    FMLChoiceVideoController *vc = [FMLChoiceVideoController new];
     self.window.rootViewController = vc;
     [self.window makeKeyAndVisible];
     

@@ -7,18 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */; };
 		9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */; };
 		B56105E41D432ECB00FFD1BD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E31D432ECB00FFD1BD /* main.m */; };
 		B56105E71D432ECB00FFD1BD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E61D432ECB00FFD1BD /* AppDelegate.m */; };
-		B56105EA1D432ECB00FFD1BD /* HJChoiceVideoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E91D432ECB00FFD1BD /* HJChoiceVideoController.m */; };
+		B56105EA1D432ECB00FFD1BD /* FMLChoiceVideoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E91D432ECB00FFD1BD /* FMLChoiceVideoController.m */; };
 		B56105ED1D432ECB00FFD1BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B56105EB1D432ECB00FFD1BD /* Main.storyboard */; };
 		B56105EF1D432ECB00FFD1BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B56105EE1D432ECB00FFD1BD /* Assets.xcassets */; };
 		B56105F21D432ECB00FFD1BD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B56105F01D432ECB00FFD1BD /* LaunchScreen.storyboard */; };
 		B56105FD1D432ECB00FFD1BD /* VideoClipTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105FC1D432ECB00FFD1BD /* VideoClipTests.m */; };
 		B56106081D432ECB00FFD1BD /* VideoClipUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B56106071D432ECB00FFD1BD /* VideoClipUITests.m */; };
-		B56106171D433E9900FFD1BD /* HJVideoChoiceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B56106161D433E9900FFD1BD /* HJVideoChoiceCell.m */; };
-		B56106191D433EBE00FFD1BD /* HJVideoChoiceCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B56106181D433EBE00FFD1BD /* HJVideoChoiceCell.xib */; };
-		B561061C1D434B2600FFD1BD /* HJClipVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B561061B1D434B2600FFD1BD /* HJClipVideoViewController.m */; };
+		B56106171D433E9900FFD1BD /* FMLVideoChoiceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B56106161D433E9900FFD1BD /* FMLVideoChoiceCell.m */; };
+		B56106191D433EBE00FFD1BD /* FMLVideoChoiceCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B56106181D433EBE00FFD1BD /* FMLVideoChoiceCell.xib */; };
+		B561061C1D434B2600FFD1BD /* FMLClipVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B561061B1D434B2600FFD1BD /* FMLClipVideoViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,14 +41,16 @@
 
 /* Begin PBXFileReference section */
 		2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VideoClip.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2518FFE61D48C07600F8C649 /* FMLClipFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLClipFrameView.h; sourceTree = "<group>"; };
+		2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLClipFrameView.m; sourceTree = "<group>"; };
 		52D1C0BED47F03B5BA90F2ED /* Pods-VideoClip.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.release.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.release.xcconfig"; sourceTree = "<group>"; };
 		A85F529924F3335758CCFCD2 /* Pods-VideoClip.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.debug.xcconfig"; sourceTree = "<group>"; };
 		B56105DF1D432ECB00FFD1BD /* VideoClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B56105E31D432ECB00FFD1BD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B56105E51D432ECB00FFD1BD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B56105E61D432ECB00FFD1BD /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		B56105E81D432ECB00FFD1BD /* HJChoiceVideoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HJChoiceVideoController.h; sourceTree = "<group>"; };
-		B56105E91D432ECB00FFD1BD /* HJChoiceVideoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HJChoiceVideoController.m; sourceTree = "<group>"; };
+		B56105E81D432ECB00FFD1BD /* FMLChoiceVideoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FMLChoiceVideoController.h; sourceTree = "<group>"; };
+		B56105E91D432ECB00FFD1BD /* FMLChoiceVideoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FMLChoiceVideoController.m; sourceTree = "<group>"; };
 		B56105EC1D432ECB00FFD1BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B56105EE1D432ECB00FFD1BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B56105F11D432ECB00FFD1BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -58,11 +61,11 @@
 		B56106031D432ECB00FFD1BD /* VideoClipUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VideoClipUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B56106071D432ECB00FFD1BD /* VideoClipUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoClipUITests.m; sourceTree = "<group>"; };
 		B56106091D432ECB00FFD1BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B56106151D433E9900FFD1BD /* HJVideoChoiceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HJVideoChoiceCell.h; sourceTree = "<group>"; };
-		B56106161D433E9900FFD1BD /* HJVideoChoiceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HJVideoChoiceCell.m; sourceTree = "<group>"; };
-		B56106181D433EBE00FFD1BD /* HJVideoChoiceCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HJVideoChoiceCell.xib; sourceTree = "<group>"; };
-		B561061A1D434B2600FFD1BD /* HJClipVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HJClipVideoViewController.h; sourceTree = "<group>"; };
-		B561061B1D434B2600FFD1BD /* HJClipVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HJClipVideoViewController.m; sourceTree = "<group>"; };
+		B56106151D433E9900FFD1BD /* FMLVideoChoiceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLVideoChoiceCell.h; sourceTree = "<group>"; };
+		B56106161D433E9900FFD1BD /* FMLVideoChoiceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLVideoChoiceCell.m; sourceTree = "<group>"; };
+		B56106181D433EBE00FFD1BD /* FMLVideoChoiceCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FMLVideoChoiceCell.xib; sourceTree = "<group>"; };
+		B561061A1D434B2600FFD1BD /* FMLClipVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLClipVideoViewController.h; sourceTree = "<group>"; };
+		B561061B1D434B2600FFD1BD /* FMLClipVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLClipVideoViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,13 +138,15 @@
 			children = (
 				B56105E51D432ECB00FFD1BD /* AppDelegate.h */,
 				B56105E61D432ECB00FFD1BD /* AppDelegate.m */,
-				B56105E81D432ECB00FFD1BD /* HJChoiceVideoController.h */,
-				B56105E91D432ECB00FFD1BD /* HJChoiceVideoController.m */,
-				B56106151D433E9900FFD1BD /* HJVideoChoiceCell.h */,
-				B56106161D433E9900FFD1BD /* HJVideoChoiceCell.m */,
-				B56106181D433EBE00FFD1BD /* HJVideoChoiceCell.xib */,
-				B561061A1D434B2600FFD1BD /* HJClipVideoViewController.h */,
-				B561061B1D434B2600FFD1BD /* HJClipVideoViewController.m */,
+				B56105E81D432ECB00FFD1BD /* FMLChoiceVideoController.h */,
+				B56105E91D432ECB00FFD1BD /* FMLChoiceVideoController.m */,
+				B56106151D433E9900FFD1BD /* FMLVideoChoiceCell.h */,
+				B56106161D433E9900FFD1BD /* FMLVideoChoiceCell.m */,
+				B56106181D433EBE00FFD1BD /* FMLVideoChoiceCell.xib */,
+				B561061A1D434B2600FFD1BD /* FMLClipVideoViewController.h */,
+				B561061B1D434B2600FFD1BD /* FMLClipVideoViewController.m */,
+				2518FFE61D48C07600F8C649 /* FMLClipFrameView.h */,
+				2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */,
 				B56105E21D432ECB00FFD1BD /* Supporting Files */,
 			);
 			path = VideoClip;
@@ -287,7 +292,7 @@
 			files = (
 				B56105F21D432ECB00FFD1BD /* LaunchScreen.storyboard in Resources */,
 				B56105EF1D432ECB00FFD1BD /* Assets.xcassets in Resources */,
-				B56106191D433EBE00FFD1BD /* HJVideoChoiceCell.xib in Resources */,
+				B56106191D433EBE00FFD1BD /* FMLVideoChoiceCell.xib in Resources */,
 				B56105ED1D432ECB00FFD1BD /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -361,10 +366,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B561061C1D434B2600FFD1BD /* HJClipVideoViewController.m in Sources */,
-				B56105EA1D432ECB00FFD1BD /* HJChoiceVideoController.m in Sources */,
+				B561061C1D434B2600FFD1BD /* FMLClipVideoViewController.m in Sources */,
+				B56105EA1D432ECB00FFD1BD /* FMLChoiceVideoController.m in Sources */,
 				B56105E71D432ECB00FFD1BD /* AppDelegate.m in Sources */,
-				B56106171D433E9900FFD1BD /* HJVideoChoiceCell.m in Sources */,
+				B56106171D433E9900FFD1BD /* FMLVideoChoiceCell.m in Sources */,
+				2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */,
 				B56105E41D432ECB00FFD1BD /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

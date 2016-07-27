@@ -1,17 +1,17 @@
 //
-//  HJClipVideoViewController.m
+//  FMLClipVideoViewController.m
 //  VideoClip
 //
 //  Created by Collion on 16/7/23.
 //  Copyright © 2016年 Collion. All rights reserved.
 //
 
-#import "HJClipVideoViewController.h"
+#import "FMLClipVideoViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import <Masonry.h>
 #import <BlocksKit+UIKit.h>
 
-@interface HJClipVideoViewController ()
+@interface FMLClipVideoViewController ()
 
 @property (nonatomic, strong) ALAsset *sourceAsset;
 @property (nonatomic, strong) AVAsset *avAsset;
@@ -26,7 +26,7 @@
 static void *HJClipVideoStatusContext = &HJClipVideoStatusContext;
 static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
-@implementation HJClipVideoViewController
+@implementation FMLClipVideoViewController
 
 - (instancetype)initClipVideoVCWithAsset:(ALAsset *)asset
 {
@@ -159,70 +159,9 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
     
-    [self getPerRateImageUsingAsset:asset completedBlock:^{
-        NSLog(@"完成");
-    }];
-}
-
-/**
- *  获取视频每一帧的图片
- *
- *  @param asset 视频资源
- */
-- (void)getPerRateImageUsingAsset:(AVAsset *)asset completedBlock:(void(^)())completedBlock
-{
-     CMTime cmtime = asset.duration; //视频时间信息结构体
-    Float64 durationSeconds = CMTimeGetSeconds(cmtime); //视频总秒数
-    
-    // 获取视频的帧数
-    float fps = [[asset tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
-    
-    NSMutableArray *times = [NSMutableArray array];
-    Float64 totalFrames = durationSeconds * fps; //获得视频总帧数
-    CMTime timeFrame;
-    for (int i = 1; i <= totalFrames; i++) {
-        timeFrame = CMTimeMake(i, fps); //第i帧  帧率
-        NSValue *timeValue = [NSValue valueWithCMTime:timeFrame];
-        [times addObject:timeValue];
-    }
-    
-    AVAssetImageGenerator *imgGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-    // 防止时间出现偏差
-    imgGenerator.requestedTimeToleranceBefore = kCMTimeZero;
-    imgGenerator.requestedTimeToleranceAfter = kCMTimeZero;
-    
-    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
-    NSInteger timesCount = [times count];
-    [imgGenerator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(CMTime requestedTime, CGImageRef  _Nullable image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError * _Nullable error) {
-        printf("current-----: %lld\n", requestedTime.value);
-        switch (result) {
-            case AVAssetImageGeneratorCancelled:
-                NSLog(@"Cancelled");
-                break;
-            case AVAssetImageGeneratorFailed:
-                NSLog(@"Failed");
-                break;
-            case AVAssetImageGeneratorSucceeded: {
-                NSString *filePath = [cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"/%lld.png",requestedTime.value]];
-                NSData *imgData = UIImagePNGRepresentation([UIImage imageWithCGImage:image]);
-                [imgData writeToFile:filePath atomically:YES];
-                
-                CMTimeShow(requestedTime);
-//                if (CMTimeShow(requestedTime) == timesCount) {
-//                    NSLog(@"completed");
-//                    if (completedBlock) {
-//                        completedBlock();
-//                    }
-//                }
-            }
-                break;
-        }
-    }];
-}
-
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [self.player play];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.player play];
+    });
 }
 
 - (void)stopLoadingAnimationAndHandleError:(NSError *)error
