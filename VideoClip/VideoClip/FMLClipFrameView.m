@@ -9,10 +9,13 @@
 #import "FMLClipFrameView.h"
 #import <Masonry.h>
 #import <AVFoundation/AVFoundation.h>
+#import "AVAsset+FMLVideo.h"
 
 static NSUInteger const FMLLineW = 3;
 
 @interface FMLClipFrameView ()
+
+@property (nonatomic, strong) AVAsset *asset;
 
 @property (nonatomic, strong) UILabel *startTimeLabel;  ///< 开始秒数
 @property (nonatomic, strong) UILabel *endTimeLabel;   ///< 结束秒数
@@ -23,6 +26,15 @@ static NSUInteger const FMLLineW = 3;
 @end
 
 @implementation FMLClipFrameView
+
+- (instancetype)initWithAsset:(AVAsset *)asset
+{
+    if (self = [super init]) {
+        _asset = asset;
+    }
+    
+    return self;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -75,6 +87,13 @@ static NSUInteger const FMLLineW = 3;
     UIView *imagesView = [UIView new];
     [self addSubview:imagesView];
     self.imagesView = imagesView;
+    [imagesView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(startTimeLabel.mas_bottom).offset(15);
+        make.height.mas_equalTo(50);
+        make.left.mas_equalTo(FMLLineW);
+        make.right.mas_equalTo(-FMLLineW);
+    }];
+    
     
 }
 
@@ -82,56 +101,8 @@ static NSUInteger const FMLLineW = 3;
 {
     NSUInteger imageCount = 8;
     
-    
-}
-
-/**
- *  获取视频图片列表
- *
- *  @param imageCount 需要的图片个数
- *  @param asset      视频资源
- */
-- (void)getImagesCount:(NSUInteger)imageCount UsingAsset:(AVAsset *)asset 
-{
-    CMTime cmtime = asset.duration; //视频时间信息结构体
-    Float64 durationSeconds = CMTimeGetSeconds(cmtime); //视频总秒数
-    
-    // 获取视频的帧数
-    float fps = [[asset tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
-    
-    NSMutableArray *times = [NSMutableArray array];
-    Float64 totalFrames = durationSeconds * fps; //获得视频总帧数
-    CMTime timeFrame;
-    
-    Float64 perFrames = totalFrames / 8; // 一共切8张图
-    Float64 frame = 0;
-    
-    while (frame < totalFrames) {
-        timeFrame = CMTimeMake(frame, fps); //第i帧  帧率
-        NSValue *timeValue = [NSValue valueWithCMTime:timeFrame];
-        [times addObject:timeValue];
+    [self.asset getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
         
-        frame += perFrames;
-    }
-    
-    AVAssetImageGenerator *imgGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-    // 防止时间出现偏差
-    imgGenerator.requestedTimeToleranceBefore = kCMTimeZero;
-    imgGenerator.requestedTimeToleranceAfter = kCMTimeZero;
-    
-    [imgGenerator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(CMTime requestedTime, CGImageRef  _Nullable image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError * _Nullable error) {
-        switch (result) {
-            case AVAssetImageGeneratorCancelled:
-                break;
-            case AVAssetImageGeneratorFailed:
-                break;
-            case AVAssetImageGeneratorSucceeded: {
-                UIImage *displayImage = [UIImage imageWithCGImage:image];
-                
-                
-            }
-                break;
-        }
     }];
 }
 

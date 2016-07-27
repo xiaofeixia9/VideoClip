@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */; };
+		2518FFF31D48CDBB00F8C649 /* AVAsset+FMLVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */; };
 		9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */; };
 		B56105E41D432ECB00FFD1BD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E31D432ECB00FFD1BD /* main.m */; };
 		B56105E71D432ECB00FFD1BD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E61D432ECB00FFD1BD /* AppDelegate.m */; };
@@ -43,6 +44,8 @@
 		2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VideoClip.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2518FFE61D48C07600F8C649 /* FMLClipFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLClipFrameView.h; sourceTree = "<group>"; };
 		2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLClipFrameView.m; sourceTree = "<group>"; };
+		2518FFF11D48CDBB00F8C649 /* AVAsset+FMLVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AVAsset+FMLVideo.h"; sourceTree = "<group>"; };
+		2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AVAsset+FMLVideo.m"; sourceTree = "<group>"; };
 		52D1C0BED47F03B5BA90F2ED /* Pods-VideoClip.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.release.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.release.xcconfig"; sourceTree = "<group>"; };
 		A85F529924F3335758CCFCD2 /* Pods-VideoClip.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.debug.xcconfig"; sourceTree = "<group>"; };
 		B56105DF1D432ECB00FFD1BD /* VideoClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -147,6 +150,8 @@
 				B561061B1D434B2600FFD1BD /* FMLClipVideoViewController.m */,
 				2518FFE61D48C07600F8C649 /* FMLClipFrameView.h */,
 				2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */,
+				2518FFF11D48CDBB00F8C649 /* AVAsset+FMLVideo.h */,
+				2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */,
 				B56105E21D432ECB00FFD1BD /* Supporting Files */,
 			);
 			path = VideoClip;
@@ -372,6 +377,7 @@
 				B56106171D433E9900FFD1BD /* FMLVideoChoiceCell.m in Sources */,
 				2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */,
 				B56105E41D432ECB00FFD1BD /* main.m in Sources */,
+				2518FFF31D48CDBB00F8C649 /* AVAsset+FMLVideo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

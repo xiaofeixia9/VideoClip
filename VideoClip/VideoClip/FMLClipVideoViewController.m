@@ -87,6 +87,8 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
 - (void)setUpPlayerView
 {
+    self.view.backgroundColor = [UIColor whiteColor];
+    
     UIView *playerView = [UIView new];
     [self.view addSubview:playerView];
     self.playerView = playerView;

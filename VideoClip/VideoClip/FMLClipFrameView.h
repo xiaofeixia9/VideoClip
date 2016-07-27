@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface FMLClipFrameView : UIView
+
+- (instancetype)initWithAsset:(AVAsset *)asset;
 
 @end
