@@ -175,7 +175,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     Float64 durationSeconds = CMTimeGetSeconds(cmtime); //视频总秒数
     
     // 获取视频的帧数
-    float fps = [[[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] nominalFrameRate];
+    float fps = [[asset tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
     
     NSMutableArray *times = [NSMutableArray array];
     Float64 totalFrames = durationSeconds * fps; //获得视频总帧数
