@@ -206,12 +206,14 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
                 NSString *filePath = [cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"/%lld.png",requestedTime.value]];
                 NSData *imgData = UIImagePNGRepresentation([UIImage imageWithCGImage:image]);
                 [imgData writeToFile:filePath atomically:YES];
-                if (requestedTime.value == timesCount) {
-                    NSLog(@"completed");
-                    if (completedBlock) {
-                        completedBlock();
-                    }
-                }
+                
+                CMTimeShow(requestedTime);
+//                if (CMTimeShow(requestedTime) == timesCount) {
+//                    NSLog(@"completed");
+//                    if (completedBlock) {
+//                        completedBlock();
+//                    }
+//                }
             }
                 break;
         }
