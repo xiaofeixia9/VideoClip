@@ -126,6 +126,25 @@
         make.top.mas_equalTo(self.imagesView.mas_top).offset(-FMLLineW);
         make.bottom.mas_equalTo(self.imagesView.mas_bottom).offset(FMLLineW);
     }];
+    
+    // 添加左右侧阴影view
+    UIView *leftShadowView = [UIView new];
+    leftShadowView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+    [self addSubview:leftShadowView];
+    [leftShadowView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(0);
+        make.right.mas_equalTo(leftDragView.mas_left);
+        make.top.bottom.mas_equalTo(imagesBackView);
+    }];
+    
+    UIView *rightShadowView = [UIView new];
+    rightShadowView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+    [self addSubview:rightShadowView];
+    [rightShadowView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(0);
+        make.left.mas_equalTo(rightDragView.mas_right);
+        make.top.bottom.mas_equalTo(imagesBackView);
+    }];
 }
 
 - (void)initData
@@ -154,7 +173,9 @@
     CGPoint translation = [ges translationInView:self];
     
     if (ges.view.x + translation.x >= 0) {
-        ges.view.x += translation.x;
+        [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(ges.view.x + translation.x);
+        }];
     }
     
     [ges setTranslation:CGPointZero inView:self];
@@ -165,17 +186,13 @@
     CGPoint translation = [ges translationInView:self];
     
     if (CGRectGetMaxX(ges.view.frame)+ translation.x <= self.width) {
-        ges.view.x += translation.x;
+        CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
+        [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(-distance);
+        }];
     }
     
     [ges setTranslation:CGPointZero inView:self];
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    [super drawRect:rect];
-    
-    
 }
 
 @end
