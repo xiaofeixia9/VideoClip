@@ -48,6 +48,8 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 #pragma mark - 初始化view
 - (void)setUpView
 {
+    self.view.backgroundColor = [UIColor whiteColor];
+    
     [self setUpNavBar];
     [self setUpPlayerView];
 }
@@ -65,8 +67,10 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     }];
     
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    
+    __weak typeof(self) weakSelf = self;
     [backBtn bk_addEventHandler:^(id sender) {
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [weakSelf dismissViewControllerAnimated:YES completion:nil];
     } forControlEvents:UIControlEventTouchUpInside];
     [backBtn setTitle:@"返回" forState:UIControlStateNormal];
     [backBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
@@ -88,15 +92,13 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
 - (void)setUpPlayerView
 {
-    self.view.backgroundColor = [UIColor whiteColor];
-    
     UIView *playerView = [UIView new];
     [self.view addSubview:playerView];
     self.playerView = playerView;
     [playerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.navBar.mas_bottom);
         make.left.right.mas_equalTo(0);
-        make.height.mas_equalTo(400);
+        make.height.mas_equalTo(300);
     }];
 }
 
@@ -114,7 +116,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         });
     }];
     
-    self.avAsset = avAsset;
+//    self.avAsset = avAsset;
     
     self.player = [AVPlayer new];
     
@@ -216,6 +218,16 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+- (void)dealloc
+{
+    [self removeObserver:self forKeyPath:@"player.currentItem.status" context:HJClipVideoStatusContext];
+    [self removeObserver:self forKeyPath:@"playerLayer.readyForDisplay" context:HJClipVideoLayerReadyForDisplay];
+    
+    [self.playerLayer removeFromSuperlayer];
+    
+    [self.player pause];
 }
 
 @end

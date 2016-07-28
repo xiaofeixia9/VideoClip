@@ -80,12 +80,13 @@ static NSUInteger const FMLLineW = 3;
 
 - (void)initData
 {
-    NSUInteger imageCount = 9;
+    NSUInteger imageCount = 8;
     
     __block NSUInteger i = 0;
     CGFloat imageW = ([UIScreen mainScreen].bounds.size.width - 6) / imageCount;
     CGFloat imageH = 50;
     
+    __weak typeof(self) weakSelf = self;
     [self.asset getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
         CGFloat imageX = i * imageW;
         
@@ -93,11 +94,10 @@ static NSUInteger const FMLLineW = 3;
         imageLayer.contents = (id) image.CGImage;
         imageLayer.frame = CGRectMake(imageX, 0, imageW, imageH);
         
-        [self.imagesView.layer addSublayer:imageLayer];
+        [weakSelf.imagesView.layer addSublayer:imageLayer];
         
         i++;
     }];
-    
 }
 
 @end
