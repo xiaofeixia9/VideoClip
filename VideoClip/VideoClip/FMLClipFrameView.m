@@ -20,6 +20,7 @@
 @interface FMLClipFrameView ()
 
 @property (nonatomic, strong) AVAsset *asset;
+@property (nonatomic, assign) NSUInteger minSeconds;  ///< 最少多少秒
 
 @property (nonatomic, strong) UILabel *startTimeLabel;  ///< 开始秒数
 @property (nonatomic, strong) UILabel *endTimeLabel;   ///< 结束秒数
@@ -34,10 +35,11 @@
 
 @implementation FMLClipFrameView
 
-- (instancetype)initWithAsset:(AVAsset *)asset
+- (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(NSUInteger)seconds
 {
     if (self = [super init]) {
         _asset = asset;
+        _minSeconds = seconds;
         
         [self initView];
         [self initData];
@@ -49,6 +51,8 @@
 #pragma mark - 初始化
 - (void)initView
 {
+    self.backgroundColor = [UIColor whiteColor];
+    
     UILabel *startTimeLabel = [UILabel new];
     startTimeLabel.text = @"00:00";
     [self addSubview:startTimeLabel];
@@ -111,6 +115,17 @@
         make.right.mas_equalTo(0);
         make.top.mas_equalTo(self.imagesView).offset(-6);
     }];
+    
+    // 添加一个底层蓝色背景的view
+    UIView *imagesBackView = [UIView new];
+    imagesBackView.backgroundColor = SMSColor(2, 212, 225);
+    [self insertSubview:imagesBackView belowSubview:self.imagesView];
+    [imagesBackView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(leftDragView.mas_left).offset(FMLLineW);
+        make.right.mas_equalTo(rightDragView.mas_right).offset(-FMLLineW);
+        make.top.mas_equalTo(self.imagesView.mas_top).offset(-FMLLineW);
+        make.bottom.mas_equalTo(self.imagesView.mas_bottom).offset(FMLLineW);
+    }];
 }
 
 - (void)initData
@@ -137,15 +152,30 @@
  - (void)leftDragGesture:(UIPanGestureRecognizer *)ges
 {
     CGPoint translation = [ges translationInView:self];
-    ges.view.transform = CGAffineTransformTranslate(ges.view.transform, translation.x, 0);
+    
+    if (ges.view.x + translation.x >= 0) {
+        ges.view.x += translation.x;
+    }
+    
     [ges setTranslation:CGPointZero inView:self];
 }
 
 - (void)rightDragGesture:(UIPanGestureRecognizer *)ges
 {
     CGPoint translation = [ges translationInView:self];
-    ges.view.transform = CGAffineTransformTranslate(ges.view.transform, translation.x, 0);
+    
+    if (CGRectGetMaxX(ges.view.frame)+ translation.x <= self.width) {
+        ges.view.x += translation.x;
+    }
+    
     [ges setTranslation:CGPointZero inView:self];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+    
+    
 }
 
 @end

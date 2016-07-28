@@ -164,7 +164,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
     
-    FMLClipFrameView *clipFrameView = [[FMLClipFrameView alloc] initWithAsset:asset];
+    FMLClipFrameView *clipFrameView = [[FMLClipFrameView alloc] initWithAsset:asset minSeconds:8];
     [self.view addSubview:clipFrameView];
     [clipFrameView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.playerView.mas_bottom);
