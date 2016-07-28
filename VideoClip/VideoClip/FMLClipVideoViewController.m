@@ -15,10 +15,11 @@
 @interface FMLClipVideoViewController ()
 
 @property (nonatomic, strong) ALAsset *sourceAsset;
-@property (nonatomic, strong) AVAsset *avAsset;
 
 @property (nonatomic, strong) UIView *navBar;
 @property (nonatomic, strong) UIView *playerView;
+@property (nonatomic, strong) FMLClipFrameView *clipFrameView;
+
 @property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 
@@ -68,7 +69,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     
-    __weak typeof(self) weakSelf = self;
+    WEAKSELF
     [backBtn bk_addEventHandler:^(id sender) {
         [weakSelf dismissViewControllerAnimated:YES completion:nil];
     } forControlEvents:UIControlEventTouchUpInside];
@@ -100,6 +101,15 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         make.left.right.mas_equalTo(0);
         make.height.mas_equalTo(300);
     }];
+    
+    WEAKSELF
+    [playerView bk_whenTapped:^{
+        if (weakSelf.player.rate > 0) {
+            [weakSelf.player pause];
+        } else {
+            [weakSelf.player play];
+        }
+    }];
 }
 
 #pragma mark - 初始化数据
@@ -115,8 +125,6 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
             [self setUpPlaybackOfAsset:avAsset withKeys:assetKeysToLoadAndTest];
         });
     }];
-    
-//    self.avAsset = avAsset;
     
     self.player = [AVPlayer new];
     
@@ -164,8 +172,14 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
     
+    [self setUpClipFrameView:asset];
+}
+
+- (void)setUpClipFrameView:(AVAsset *)asset
+{
     FMLClipFrameView *clipFrameView = [[FMLClipFrameView alloc] initWithAsset:asset minSeconds:8];
     [self.view addSubview:clipFrameView];
+    self.clipFrameView = clipFrameView;
     [clipFrameView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.playerView.mas_bottom);
         make.left.right.mas_equalTo(0);

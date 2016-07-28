@@ -13,11 +13,10 @@
 
 - (void)getImagesCount:(NSUInteger)imageCount imageBackBlock:(void (^)(UIImage *))imageBackBlock
 {
-    CMTime cmtime = self.duration; //视频时间信息结构体
-    Float64 durationSeconds = CMTimeGetSeconds(cmtime); //视频总秒数
+    Float64 durationSeconds = [self getSeconds];
     
     // 获取视频的帧数
-    float fps = [[self tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
+    float fps = [self getFPS];
     
     NSMutableArray *times = [NSMutableArray array];
     Float64 totalFrames = durationSeconds * fps; //获得视频总帧数
@@ -55,6 +54,18 @@
                 break;
         }
     }];
+}
+
+- (Float64)getSeconds
+{
+    CMTime cmtime = self.duration; //视频时间信息结构体
+    return CMTimeGetSeconds(cmtime); //视频总秒数
+}
+
+/** 获取fps */
+- (float)getFPS
+{
+    return [[self tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
 }
 
 @end

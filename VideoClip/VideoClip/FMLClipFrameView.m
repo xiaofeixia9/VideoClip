@@ -13,12 +13,13 @@
 #import <BlocksKit+UIKit.h>
 
 #define FMLLineW 3                // 线宽
-#define FMLImagesViewH 36
+#define FMLImagesViewH 40  // 预览图高度
 
-#define FMLImageCount 8     // 现实的图片个数
+#define FMLImageCount 8     // 显示的图片个数
 
 @interface FMLClipFrameView ()
 
+@property (nonatomic, assign) Float64 totalSeconds;         ///< 总秒数
 @property (nonatomic, strong) AVAsset *asset;
 @property (nonatomic, assign) NSUInteger minSeconds;  ///< 最少多少秒
 
@@ -85,8 +86,8 @@
     [imagesView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(startTimeLabel.mas_bottom).offset(15);
         make.height.mas_equalTo(FMLImagesViewH);
-        make.left.mas_equalTo(FMLLineW);
-        make.right.mas_equalTo(-FMLLineW);
+        make.left.mas_equalTo(0);
+        make.right.mas_equalTo(0);
     }];
     
     [self setUpDragView];
@@ -150,7 +151,7 @@
 - (void)initData
 {
     __block NSUInteger i = 0;
-    CGFloat imageW = ([UIScreen mainScreen].bounds.size.width - 2 * FMLLineW) / FMLImageCount;
+    CGFloat imageW = [UIScreen mainScreen].bounds.size.width / FMLImageCount;
     CGFloat imageH = FMLImagesViewH;
     
     __weak typeof(self) weakSelf = self;
@@ -165,6 +166,20 @@
         
         i++;
     }];
+    
+    // 现实秒数
+    self.totalSeconds = [self.asset getSeconds];
+    self.endTimeLabel.text = [self secondsToStr:self.totalSeconds];
+    self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", self.totalSeconds];
+}
+
+/** 将秒转为字符串 */
+- (NSString *)secondsToStr:(Float64)seconds
+{
+    NSInteger secondI = (NSInteger) seconds;
+    NSInteger second = ceil(secondI % 60);
+    NSInteger minute = ceil((secondI / 60) % secondI);
+    return [NSString stringWithFormat:@"%02ld:%02ld", second, minute];
 }
 
 #pragma mark - 拖拽事件
@@ -179,6 +194,10 @@
     }
     
     [ges setTranslation:CGPointZero inView:self];
+    
+    Float64 leftSecond = ges.view.x / self.width * self.totalSeconds;
+    self.startTimeLabel.text = [self secondsToStr:leftSecond];
+    
 }
 
 - (void)rightDragGesture:(UIPanGestureRecognizer *)ges

@@ -18,4 +18,9 @@
  */
 - (void)getImagesCount:(NSUInteger)imageCount imageBackBlock:(void (^)(UIImage *))imageBackBlock;
 
+/**
+ *  获取视频的总秒数
+ */
+- (Float64)getSeconds;
+
 @end
