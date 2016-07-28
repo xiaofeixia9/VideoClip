@@ -11,7 +11,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import "AVAsset+FMLVideo.h"
 
-static NSUInteger const FMLLineW = 3;
+#define FMLLineW 2                // 线宽
+#define FMLImageCount 8     // 现实的图片个数
 
 @interface FMLClipFrameView ()
 
@@ -73,21 +74,19 @@ static NSUInteger const FMLLineW = 3;
     [imagesView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(startTimeLabel.mas_bottom).offset(15);
         make.height.mas_equalTo(50);
-        make.left.mas_equalTo(3);
-        make.right.mas_equalTo(-3);
+        make.left.mas_equalTo(FMLLineW);
+        make.right.mas_equalTo(-FMLLineW);
     }];
 }
 
 - (void)initData
 {
-    NSUInteger imageCount = 8;
-    
     __block NSUInteger i = 0;
-    CGFloat imageW = ([UIScreen mainScreen].bounds.size.width - 6) / imageCount;
+    CGFloat imageW = ([UIScreen mainScreen].bounds.size.width - 2 * FMLLineW) / FMLImageCount;
     CGFloat imageH = 50;
     
     __weak typeof(self) weakSelf = self;
-    [self.asset getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
+    [self.asset getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
         CGFloat imageX = i * imageW;
         
         CALayer *imageLayer = [CALayer new];
