@@ -10,8 +10,11 @@
 #import <Masonry.h>
 #import <AVFoundation/AVFoundation.h>
 #import "AVAsset+FMLVideo.h"
+#import <BlocksKit+UIKit.h>
 
-#define FMLLineW 2                // 线宽
+#define FMLLineW 3                // 线宽
+#define FMLImagesViewH 36
+
 #define FMLImageCount 8     // 现实的图片个数
 
 @interface FMLClipFrameView ()
@@ -23,6 +26,9 @@
 @property (nonatomic, strong) UILabel *clipSecondLabel; ///< 一共截多少秒
 
 @property (nonatomic, strong) UIView *imagesView;   ///< 显示帧图片列表
+
+@property (nonatomic, strong) UIView *leftDragView;     ///< 左边时间拖拽view
+@property (nonatomic, strong) UIView *rightDragView;  ///< 右边时间拖拽view
 
 @end
 
@@ -40,6 +46,7 @@
     return self;
 }
 
+#pragma mark - 初始化
 - (void)initView
 {
     UILabel *startTimeLabel = [UILabel new];
@@ -73,9 +80,36 @@
     self.imagesView = imagesView;
     [imagesView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(startTimeLabel.mas_bottom).offset(15);
-        make.height.mas_equalTo(50);
+        make.height.mas_equalTo(FMLImagesViewH);
         make.left.mas_equalTo(FMLLineW);
         make.right.mas_equalTo(-FMLLineW);
+    }];
+    
+    [self setUpDragView];
+}
+
+/** 初始化拖拽view */
+- (void)setUpDragView
+{
+    // 添加左右拖拽view
+    UIView *leftDragView = [UIView new];
+    [leftDragView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(leftDragGesture:)]];
+    leftDragView.layer.contents = (id) [UIImage imageNamed:@"cut_bar_left"].CGImage;
+    [self addSubview:leftDragView];
+    [leftDragView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(28, 75));
+        make.left.mas_equalTo(0);
+        make.top.mas_equalTo(self.imagesView).offset(-6);
+    }];
+    
+    UIView *rightDragView = [UIView new];
+    [rightDragView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(rightDragGesture:)]];
+    rightDragView.layer.contents = (id) [UIImage imageNamed:@"cut_bar_right"].CGImage;
+    [self addSubview:rightDragView];
+    [rightDragView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(28, 75));
+        make.right.mas_equalTo(0);
+        make.top.mas_equalTo(self.imagesView).offset(-6);
     }];
 }
 
@@ -83,7 +117,7 @@
 {
     __block NSUInteger i = 0;
     CGFloat imageW = ([UIScreen mainScreen].bounds.size.width - 2 * FMLLineW) / FMLImageCount;
-    CGFloat imageH = 50;
+    CGFloat imageH = FMLImagesViewH;
     
     __weak typeof(self) weakSelf = self;
     [self.asset getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
@@ -97,6 +131,21 @@
         
         i++;
     }];
+}
+
+#pragma mark - 拖拽事件
+ - (void)leftDragGesture:(UIPanGestureRecognizer *)ges
+{
+    CGPoint translation = [ges translationInView:self];
+    ges.view.transform = CGAffineTransformTranslate(ges.view.transform, translation.x, 0);
+    [ges setTranslation:CGPointZero inView:self];
+}
+
+- (void)rightDragGesture:(UIPanGestureRecognizer *)ges
+{
+    CGPoint translation = [ges translationInView:self];
+    ges.view.transform = CGAffineTransformTranslate(ges.view.transform, translation.x, 0);
+    [ges setTranslation:CGPointZero inView:self];
 }
 
 @end

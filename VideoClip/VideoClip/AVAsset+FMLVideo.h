@@ -11,10 +11,10 @@
 @interface AVAsset (FMLVideo)
 
 /**
- *   获取帧图片
+ *   获取每帧图片
  *
  *  @param imageCount     需要获取的图片个数
- *  @param imageBackBlock 得到一个图片是的block
+ *  @param imageBackBlock 得到一个图片时返回的block
  */
 - (void)getImagesCount:(NSUInteger)imageCount imageBackBlock:(void (^)(UIImage *))imageBackBlock;
 

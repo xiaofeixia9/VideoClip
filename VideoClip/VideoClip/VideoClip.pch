@@ -1,0 +1,14 @@
+//
+//  VideoClip.pch
+//  VideoClip
+//
+//  Created by samo on 16/7/28.
+//  Copyright © 2016年 Collion. All rights reserved.
+//
+
+#ifndef VideoClip_pch
+#define VideoClip_pch
+
+#import "UIView+Extension.h"
+
+#endif /* VideoClip_pch */

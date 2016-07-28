@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */; };
 		2518FFF31D48CDBB00F8C649 /* AVAsset+FMLVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */; };
+		2575646A1D49B9F800D58AB2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 257564691D49B9F800D58AB2 /* libz.tbd */; };
+		2575646D1D49E50800D58AB2 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 2575646C1D49E50800D58AB2 /* UIView+Extension.m */; };
 		9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */; };
 		B56105E41D432ECB00FFD1BD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E31D432ECB00FFD1BD /* main.m */; };
 		B56105E71D432ECB00FFD1BD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E61D432ECB00FFD1BD /* AppDelegate.m */; };
@@ -46,6 +48,10 @@
 		2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLClipFrameView.m; sourceTree = "<group>"; };
 		2518FFF11D48CDBB00F8C649 /* AVAsset+FMLVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AVAsset+FMLVideo.h"; sourceTree = "<group>"; };
 		2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AVAsset+FMLVideo.m"; sourceTree = "<group>"; };
+		257564691D49B9F800D58AB2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		2575646B1D49E50800D58AB2 /* UIView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
+		2575646C1D49E50800D58AB2 /* UIView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
+		2575646E1D49E58A00D58AB2 /* VideoClip.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoClip.pch; sourceTree = "<group>"; };
 		52D1C0BED47F03B5BA90F2ED /* Pods-VideoClip.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.release.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.release.xcconfig"; sourceTree = "<group>"; };
 		A85F529924F3335758CCFCD2 /* Pods-VideoClip.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.debug.xcconfig"; sourceTree = "<group>"; };
 		B56105DF1D432ECB00FFD1BD /* VideoClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2575646A1D49B9F800D58AB2 /* libz.tbd in Frameworks */,
 				9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,6 +116,7 @@
 		88A58FB187D2337CA0E22157 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				257564691D49B9F800D58AB2 /* libz.tbd */,
 				2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */,
 			);
 			name = Frameworks;
@@ -160,6 +168,9 @@
 		B56105E21D432ECB00FFD1BD /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				2575646B1D49E50800D58AB2 /* UIView+Extension.h */,
+				2575646C1D49E50800D58AB2 /* UIView+Extension.m */,
+				2575646E1D49E58A00D58AB2 /* VideoClip.pch */,
 				B56105EB1D432ECB00FFD1BD /* Main.storyboard */,
 				B56105EE1D432ECB00FFD1BD /* Assets.xcassets */,
 				B56105F01D432ECB00FFD1BD /* LaunchScreen.storyboard */,
@@ -377,6 +388,7 @@
 				B56106171D433E9900FFD1BD /* FMLVideoChoiceCell.m in Sources */,
 				2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */,
 				B56105E41D432ECB00FFD1BD /* main.m in Sources */,
+				2575646D1D49E50800D58AB2 /* UIView+Extension.m in Sources */,
 				2518FFF31D48CDBB00F8C649 /* AVAsset+FMLVideo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -521,6 +533,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/VideoClip",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = VideoClip/VideoClip.pch;
 				INFOPLIST_FILE = VideoClip/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -537,6 +555,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/VideoClip",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = VideoClip/VideoClip.pch;
 				INFOPLIST_FILE = VideoClip/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
