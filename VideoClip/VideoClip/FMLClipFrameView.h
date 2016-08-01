@@ -11,6 +11,6 @@
 
 @interface FMLClipFrameView : UIView
 
-- (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(NSUInteger)seconds;
+- (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(Float64)seconds;
 
 @end

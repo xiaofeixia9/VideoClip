@@ -21,7 +21,7 @@
 
 @property (nonatomic, assign) Float64 totalSeconds;         ///< 总秒数
 @property (nonatomic, strong) AVAsset *asset;
-@property (nonatomic, assign) NSUInteger minSeconds;  ///< 最少多少秒
+@property (nonatomic, assign) Float64 minSeconds;  ///< 最少多少秒
 
 @property (nonatomic, strong) UILabel *startTimeLabel;  ///< 开始秒数
 @property (nonatomic, strong) UILabel *endTimeLabel;   ///< 结束秒数
@@ -36,7 +36,7 @@
 
 @implementation FMLClipFrameView
 
-- (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(NSUInteger)seconds
+- (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(Float64)seconds
 {
     if (self = [super init]) {
         _asset = asset;
@@ -101,6 +101,7 @@
     [leftDragView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(leftDragGesture:)]];
     leftDragView.layer.contents = (id) [UIImage imageNamed:@"cut_bar_left"].CGImage;
     [self addSubview:leftDragView];
+    self.leftDragView = leftDragView;
     [leftDragView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(28, 75));
         make.left.mas_equalTo(0);
@@ -111,6 +112,7 @@
     [rightDragView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(rightDragGesture:)]];
     rightDragView.layer.contents = (id) [UIImage imageNamed:@"cut_bar_right"].CGImage;
     [self addSubview:rightDragView];
+    self.rightDragView = rightDragView;
     [rightDragView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(28, 75));
         make.right.mas_equalTo(0);
@@ -179,39 +181,72 @@
     NSInteger secondI = (NSInteger) seconds;
     NSInteger second = ceil(secondI % 60);
     NSInteger minute = ceil((secondI / 60) % secondI);
-    return [NSString stringWithFormat:@"%02ld:%02ld", second, minute];
+    return [NSString stringWithFormat:@"%02ld:%02ld", minute, second];
 }
 
 #pragma mark - 拖拽事件
  - (void)leftDragGesture:(UIPanGestureRecognizer *)ges
 {
-    CGPoint translation = [ges translationInView:self];
-    
-    if (ges.view.x + translation.x >= 0) {
-        [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(ges.view.x + translation.x);
-        }];
+    if (ges.state == UIGestureRecognizerStateChanged) {
+        CGPoint translation = [ges translationInView:self];
+        
+        // 判断滑块滑动的时间是否小于最小秒
+        Float64 diffSeconds = (CGRectGetMaxX(self.rightDragView.frame) - ges.view.x) / self.width * self.totalSeconds;
+        self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
+        
+        if (diffSeconds <= self.minSeconds && translation.x > 0) {
+            return;
+        }
+        
+        CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
+        CGFloat rightMaxX = CGRectGetMaxX(self.rightDragView.frame);
+        CGFloat leftViewShouldX = rightMaxX - shouldDiffDis;
+
+        if (ges.view.x + translation.x >= 0 && ges.view.x + translation.x < leftViewShouldX) {
+            [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.left.mas_equalTo(ges.view.x + translation.x);
+            }];
+        }
+        
+        [ges setTranslation:CGPointZero inView:self];
+        
+        // 显示目前滑到的时间
+        Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
+        self.startTimeLabel.text = [self secondsToStr:leftSecond];
     }
-    
-    [ges setTranslation:CGPointZero inView:self];
-    
-    Float64 leftSecond = ges.view.x / self.width * self.totalSeconds;
-    self.startTimeLabel.text = [self secondsToStr:leftSecond];
-    
 }
 
 - (void)rightDragGesture:(UIPanGestureRecognizer *)ges
 {
-    CGPoint translation = [ges translationInView:self];
-    
-    if (CGRectGetMaxX(ges.view.frame)+ translation.x <= self.width) {
-        CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
-        [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.right.mas_equalTo(-distance);
-        }];
+    if (ges.state == UIGestureRecognizerStateChanged) {
+        CGPoint translation = [ges translationInView:self];
+        
+        Float64 diffSeconds = (CGRectGetMaxX(ges.view.frame) - self.leftDragView.x) / self.width * self.totalSeconds;
+        self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
+        
+        if (diffSeconds <= self.minSeconds && translation.x < 0) {
+            return;
+        }
+        
+        //  计算关于两个拖拽view最小的间距
+        CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
+        CGFloat leftMaxX = self.leftDragView.x;
+        CGFloat leftViewShouldX = leftMaxX + shouldDiffDis;
+        
+        CGFloat resultX = CGRectGetMaxX(ges.view.frame)+ translation.x;
+        if (resultX <= self.width && resultX >leftViewShouldX) {
+            CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
+            [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.right.mas_equalTo(-distance);
+            }];
+        }
+        
+        [ges setTranslation:CGPointZero inView:self];
+        
+        // 显示目前滑到的时间
+        Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
+        self.endTimeLabel.text = [self secondsToStr:rightSecond];
     }
-    
-    [ges setTranslation:CGPointZero inView:self];
 }
 
 @end
