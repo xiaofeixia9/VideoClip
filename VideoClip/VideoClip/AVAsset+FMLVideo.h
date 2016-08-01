@@ -23,4 +23,13 @@
  */
 - (Float64)getSeconds;
 
+/**
+ *  将秒显示对应的缩略图
+ *
+ *  @param timeBySecond 秒
+ *
+ *  @return 返回得到的缩略图
+ */
+- (UIImage *)getThumbailImageRequestAtTimeSecond:(Float64)timeBySecond;
+
 @end

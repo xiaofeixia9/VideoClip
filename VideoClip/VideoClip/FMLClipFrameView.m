@@ -213,6 +213,9 @@
         // 显示目前滑到的时间
         Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
         self.startTimeLabel.text = [self secondsToStr:leftSecond];
+        
+        UIImage *image = [self.asset getThumbailImageRequestAtTimeSecond:leftSecond];
+        !self.didDragView ? : self.didDragView(image);
     }
 }
 
@@ -246,6 +249,9 @@
         // 显示目前滑到的时间
         Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
         self.endTimeLabel.text = [self secondsToStr:rightSecond];
+        
+        UIImage *image = [self.asset getThumbailImageRequestAtTimeSecond:rightSecond];
+        !self.didDragView ? : self.didDragView(image);
     }
 }
 

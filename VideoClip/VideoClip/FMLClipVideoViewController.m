@@ -185,6 +185,9 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         make.left.right.mas_equalTo(0);
         make.height.mas_equalTo(122);
     }];
+    [clipFrameView setDidDragView:^(UIImage *image) {
+        self.playerLayer.contents = (id) image.CGImage;
+    }];
 }
 
 - (void)stopLoadingAnimationAndHandleError:(NSError *)error

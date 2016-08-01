@@ -68,4 +68,25 @@
     return [[self tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
 }
 
+- (UIImage *)getThumbailImageRequestAtTimeSecond:(CGFloat)timeBySecond
+{
+
+    AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self];
+    
+    CMTime time = CMTimeMake(timeBySecond, self.getFPS);
+    CMTime actualTime;//实际生成视频缩略图的时间
+    NSError *error = nil;
+    //使用对象方法，生成视频缩略图，注意生成的是CGImageRef类型，如果要在UIImageView上显示，需要转为UIImage
+    CGImageRef cgImage = [imageGenerator copyCGImageAtTime:time
+                                                actualTime:&actualTime
+                                                     error:&error];
+    if (error) {
+        
+        return nil;
+    }
+    UIImage *image = [UIImage imageWithCGImage:cgImage];
+    CGImageRelease(cgImage);
+    return image;
+}
+
 @end
