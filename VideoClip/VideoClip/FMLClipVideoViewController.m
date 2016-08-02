@@ -12,6 +12,7 @@
 #import <BlocksKit+UIKit.h>
 #import "FMLClipFrameView.h"
 #import "AVAsset+FMLVideo.h"
+#import "UIImage+FMLClipRect.h"
 
 @interface FMLClipVideoViewController ()
 
@@ -21,8 +22,9 @@
 @property (nonatomic, strong) UIView *playerView;
 @property (nonatomic, strong) FMLClipFrameView *clipFrameView;
 
-@property (nonatomic, strong) AVPlayer *player;
-@property (nonatomic, strong) AVPlayerLayer *playerLayer;
+@property (nonatomic, strong) AVPlayer *player;                     ///< 播放器
+@property (nonatomic, strong) AVPlayerLayer *playerLayer;    ///< 播放的layer
+@property (nonatomic, strong) CALayer *imageLayer;              ///< 显示图片的layer
 
 @end
 
@@ -109,6 +111,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
             [weakSelf.player pause];
         } else {
             [weakSelf.player play];
+            weakSelf.imageLayer.hidden = YES;
         }
     }];
 }
@@ -159,11 +162,12 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     // 代表视频的每个通道长度是否为0
     if ([asset tracksWithMediaType:AVMediaTypeVideo].count != 0) {
         AVPlayerLayer *newPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:[self player]];
-        [newPlayerLayer setFrame:self.playerView.layer.bounds];
+        newPlayerLayer.frame = self.playerView.layer.bounds;
         [newPlayerLayer setHidden:YES];
         [self.playerView.layer addSublayer:newPlayerLayer];
         self.playerLayer = newPlayerLayer;
         
+        [self.playerView.layer insertSublayer:self.imageLayer above:newPlayerLayer];
         [self addObserver:self forKeyPath:@"playerLayer.readyForDisplay" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:HJClipVideoLayerReadyForDisplay];
     } else {
         
@@ -190,8 +194,13 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     WEAKSELF
     [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
         [asset fml_getThumbailImageRequestAtTimeSecond:second imageBackBlock:^(UIImage *image) {    // 获取每一秒对应的图片
-            NSLog(@"%@", [NSThread currentThread]);
-            self.playerLayer.contents = (id) image.CGImage;
+            CGRect clipRect = weakSelf.playerLayer.videoRect;
+            CGRect orginalRect = weakSelf.playerView.frame;
+            
+            [image fml_imageOrginalRect:orginalRect clipRect:clipRect completeBlock:^(UIImage *clipImage) {
+                weakSelf.imageLayer.hidden = NO;
+                weakSelf.imageLayer.contents = (id) clipImage.CGImage;
+            }];
         }];
     }];
 }
@@ -253,13 +262,16 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     [self.player pause];
 }
 
+#pragma mark - 懒加载
+- (CALayer *)imageLayer
+{
+    if (!_imageLayer) {
+        _imageLayer = [CALayer new];
+        _imageLayer.frame = self.playerView.layer.bounds;
+        _imageLayer.hidden = YES;
+    }
+    
+    return _imageLayer;
+}
+
 @end
-
-
-/**
- CMTime一个用于描绘多媒体帧数和播放速率的构造体，可以经过 CMTimeMake(int64_t value, int32_t timescale) 来天生一个CMTime变量，第1个参数代表获取第几帧的截图,第2个参数代表每秒的帧数.因此实际截取的时间点是value/timescale。
- */
-
-/**
- CMTimeMakeWithSeconds(Float64 seconds, int32_t preferredTimeScale)  第1个参数代表获取第几秒的截图,第2个参数则代表每秒的帧数
- */
