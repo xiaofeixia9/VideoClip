@@ -263,6 +263,19 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 }
 
 #pragma mark - 懒加载
+- (AVPlayerLayer *)playerLayer
+{
+    if (!_playerLayer) {
+        AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:[self player]];
+        playerLayer.frame = self.playerView.layer.bounds;
+        playerLayer.hidden = YES;
+        
+        _playerLayer = playerLayer;
+    }
+    
+    return _playerLayer;
+}
+
 - (CALayer *)imageLayer
 {
     if (!_imageLayer) {
