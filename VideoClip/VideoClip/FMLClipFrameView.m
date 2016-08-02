@@ -187,75 +187,92 @@
 #pragma mark - 拖拽事件
  - (void)leftDragGesture:(UIPanGestureRecognizer *)ges
 {
-    if (ges.state == UIGestureRecognizerStateChanged) {
-        CGPoint translation = [ges translationInView:self];
+    switch (ges.state) {
+        case UIGestureRecognizerStateBegan:
+            !self.didStartDragView ? : self.didStartDragView();
+            break;
+        case UIGestureRecognizerStateChanged: {
         
-        // 判断滑块滑动的时间是否小于最小秒
-        Float64 diffSeconds = (CGRectGetMaxX(self.rightDragView.frame) - ges.view.x) / self.width * self.totalSeconds;
-        self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
-        
-        if (diffSeconds <= self.minSeconds && translation.x > 0) {
-            return;
-        }
-        
-        CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
-        CGFloat rightMaxX = CGRectGetMaxX(self.rightDragView.frame);
-        CGFloat leftViewShouldX = rightMaxX - shouldDiffDis;
-
-        if (ges.view.x + translation.x >= 0 && ges.view.x + translation.x < leftViewShouldX) {
-            [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.left.mas_equalTo(ges.view.x + translation.x);
-            }];
-        }
-        
-        [ges setTranslation:CGPointZero inView:self];
-        
-        // 显示目前滑到的时间
-        Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
-        self.startTimeLabel.text = [self secondsToStr:leftSecond];
-        
-        !self.didDragView ? : self.didDragView(leftSecond);
-    } else if (ges.state == UIGestureRecognizerStateEnded) {
-        Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
-        !self.didEndDragLeftView ? : self.didEndDragLeftView(leftSecond);
+            CGPoint translation = [ges translationInView:self];
+            
+            // 判断滑块滑动的时间是否小于最小秒
+            Float64 diffSeconds = (CGRectGetMaxX(self.rightDragView.frame) - ges.view.x) / self.width * self.totalSeconds;
+            self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
+            
+            if (diffSeconds <= self.minSeconds && translation.x > 0) {
+                return;
+            }
+            
+            CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
+            CGFloat rightMaxX = CGRectGetMaxX(self.rightDragView.frame);
+            CGFloat leftViewShouldX = rightMaxX - shouldDiffDis;
+            
+            if (ges.view.x + translation.x >= 0 && ges.view.x + translation.x < leftViewShouldX) {
+                [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.left.mas_equalTo(ges.view.x + translation.x);
+                }];
+            }
+            
+            [ges setTranslation:CGPointZero inView:self];
+            
+            // 显示目前滑到的时间
+            Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
+            self.startTimeLabel.text = [self secondsToStr:leftSecond];
+            
+            !self.didDragView ? : self.didDragView(leftSecond);
+        } break;
+        case UIGestureRecognizerStateEnded: {
+            Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
+            !self.didEndDragLeftView ? : self.didEndDragLeftView(leftSecond);
+        } break;
+        default:
+            break;
     }
 }
 
 - (void)rightDragGesture:(UIPanGestureRecognizer *)ges
 {
-    if (ges.state == UIGestureRecognizerStateChanged) {
-        CGPoint translation = [ges translationInView:self];
-        
-        Float64 diffSeconds = (CGRectGetMaxX(ges.view.frame) - self.leftDragView.x) / self.width * self.totalSeconds;
-        self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
-        
-        if (diffSeconds <= self.minSeconds && translation.x < 0) {
-            return;
-        }
-        
-        //  计算关于两个拖拽view最小的间距
-        CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
-        CGFloat leftMaxX = self.leftDragView.x;
-        CGFloat leftViewShouldX = leftMaxX + shouldDiffDis;
-        
-        CGFloat resultX = CGRectGetMaxX(ges.view.frame)+ translation.x;
-        if (resultX <= self.width && resultX >leftViewShouldX) {
-            CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
-            [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.right.mas_equalTo(-distance);
-            }];
-        }
-        
-        [ges setTranslation:CGPointZero inView:self];
-        
-        // 显示目前滑到的时间
-        Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
-        self.endTimeLabel.text = [self secondsToStr:rightSecond];
-        
-        !self.didDragView ? : self.didDragView(rightSecond);
-    } else if (ges.state == UIGestureRecognizerStateEnded) {
-        Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
-        !self.didEndDragRightView ? : self.didEndDragRightView(rightSecond);
+    switch (ges.state) {
+        case UIGestureRecognizerStateBegan:
+            !self.didStartDragView ? : self.didStartDragView();
+            break;
+        case UIGestureRecognizerStateChanged: {
+            CGPoint translation = [ges translationInView:self];
+            
+            Float64 diffSeconds = (CGRectGetMaxX(ges.view.frame) - self.leftDragView.x) / self.width * self.totalSeconds;
+            self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
+            
+            if (diffSeconds <= self.minSeconds && translation.x < 0) {
+                return;
+            }
+            
+            //  计算关于两个拖拽view最小的间距
+            CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
+            CGFloat leftMaxX = self.leftDragView.x;
+            CGFloat leftViewShouldX = leftMaxX + shouldDiffDis;
+            
+            CGFloat resultX = CGRectGetMaxX(ges.view.frame)+ translation.x;
+            if (resultX <= self.width && resultX >leftViewShouldX) {
+                CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
+                [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.right.mas_equalTo(-distance);
+                }];
+            }
+            
+            [ges setTranslation:CGPointZero inView:self];
+            
+            // 显示目前滑到的时间
+            Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
+            self.endTimeLabel.text = [self secondsToStr:rightSecond];
+            
+            !self.didDragView ? : self.didDragView(rightSecond);
+        } break;
+        case UIGestureRecognizerStateEnded: {
+            Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
+            !self.didEndDragRightView ? : self.didEndDragRightView(rightSecond);
+        } break;
+        default:
+            break;
     }
 }
 

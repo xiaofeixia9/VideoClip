@@ -190,15 +190,25 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     }];
     
     WEAKSELF
+    [clipFrameView setDidStartDragView:^{
+        if (weakSelf.player.rate > 0) { // 正在播放的时候
+            [weakSelf.player pause];
+        }
+    }];
+    
+    float fps = asset.fml_getFPS;
     [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
         [weakSelf didDragSecond:second];
+        [weakSelf.player seekToTime:CMTimeMake(fps * second, fps)];
     }];
     
-    [clipFrameView setDidEndDragLeftView:^(Float64 second) {
+    
+    [clipFrameView setDidEndDragLeftView:^(Float64 second) {    // 结束左边view拖拽
         
+        [weakSelf.player seekToTime:CMTimeMake(fps * second, fps)];
     }];
     
-    [clipFrameView setDidEndDragRightView:^(Float64 second) {
+    [clipFrameView setDidEndDragRightView:^(Float64 second) {   // 结束右边view拖拽
         
     }];
 }
@@ -229,7 +239,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         CGRect orginalRect = weakSelf.playerView.frame;
         
         [image fml_imageOrginalRect:orginalRect clipRect:clipRect completeBlock:^(UIImage *clipImage) {
-            weakSelf.imageLayer.hidden = NO;
+//            weakSelf.imageLayer.hidden = NO;
             weakSelf.imageLayer.contents = (id) clipImage.CGImage;
         }];
     }];

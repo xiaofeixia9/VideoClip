@@ -27,6 +27,9 @@
  */
 - (Float64)fml_getSeconds;
 
+/** 获取fps */
+- (float)fml_getFPS;
+
 /**
  *  将秒显示对应的缩略图
  *

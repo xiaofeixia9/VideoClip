@@ -11,6 +11,8 @@
 
 @interface FMLClipFrameView : UIView
 
+@property (nonatomic, copy) void (^didStartDragView)();
+
 @property (nonatomic, copy) void (^didDragView)(Float64 second);
 
 @property (nonatomic, copy) void (^didEndDragLeftView)(Float64 second);

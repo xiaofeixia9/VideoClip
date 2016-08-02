@@ -20,7 +20,7 @@ static void *cFrameRate = &cFrameRate;
     Float64 durationSeconds = [self fml_getSeconds];
     
     // 获取视频的帧数
-    float fps = [self getFPS];
+    float fps = [self fml_getFPS];
     
     NSMutableArray *times = [NSMutableArray array];
     Float64 totalFrames = durationSeconds * fps; //获得视频总帧数
@@ -66,8 +66,7 @@ static void *cFrameRate = &cFrameRate;
     return CMTimeGetSeconds(cmtime); //视频总秒数
 }
 
-/** 获取fps */
-- (float)getFPS
+- (float)fml_getFPS
 {
     if (!self.frameRate) {
         float fps = [[self tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
@@ -87,7 +86,7 @@ static void *cFrameRate = &cFrameRate;
         self.imgGenerator = imageGenerator;
     }
     
-    NSArray *array = [NSArray arrayWithObject:[NSValue valueWithCMTime:CMTimeMake(timeBySecond * self.getFPS, self.getFPS)]];
+    NSArray *array = [NSArray arrayWithObject:[NSValue valueWithCMTime:CMTimeMake(timeBySecond * self.fml_getFPS, self.fml_getFPS)]];
     [self.imgGenerator generateCGImagesAsynchronouslyForTimes:array completionHandler:^(CMTime requestedTime, CGImageRef  _Nullable image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError * _Nullable error) {
         switch (result) {
             case AVAssetImageGeneratorCancelled:
