@@ -214,8 +214,7 @@
         Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
         self.startTimeLabel.text = [self secondsToStr:leftSecond];
         
-        UIImage *image = [self.asset getThumbailImageRequestAtTimeSecond:leftSecond];
-        !self.didDragView ? : self.didDragView(image);
+        !self.didDragView ? : self.didDragView(leftSecond);
     }
 }
 
@@ -250,8 +249,7 @@
         Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
         self.endTimeLabel.text = [self secondsToStr:rightSecond];
         
-        UIImage *image = [self.asset getThumbailImageRequestAtTimeSecond:rightSecond];
-        !self.didDragView ? : self.didDragView(image);
+        !self.didDragView ? : self.didDragView(rightSecond);
     }
 }
 

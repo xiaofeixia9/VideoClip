@@ -11,7 +11,7 @@
 
 @interface FMLClipFrameView : UIView
 
-@property (nonatomic, copy) void (^didDragView)(UIImage *image);
+@property (nonatomic, copy) void (^didDragView)(Float64 second);
 
 - (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(Float64)seconds;
 

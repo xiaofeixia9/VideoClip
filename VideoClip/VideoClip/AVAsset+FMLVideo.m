@@ -8,6 +8,10 @@
 
 #import "AVAsset+FMLVideo.h"
 #import <UIKit/UIKit.h>
+#import <objc/runtime.h>
+
+static void *cImgGenerator = &cImgGenerator;
+static void *cFrameRate = &cFrameRate;
 
 @implementation AVAsset (FMLVideo)
 
@@ -20,11 +24,11 @@
     
     NSMutableArray *times = [NSMutableArray array];
     Float64 totalFrames = durationSeconds * fps; //获得视频总帧数
-    CMTime timeFrame;
     
     Float64 perFrames = totalFrames / imageCount; // 一共切8张图
     Float64 frame = 0;
     
+    CMTime timeFrame;
     while (frame < totalFrames) {
         timeFrame = CMTimeMake(frame, fps); //第i帧  帧率
         NSValue *timeValue = [NSValue valueWithCMTime:timeFrame];
@@ -65,28 +69,62 @@
 /** 获取fps */
 - (float)getFPS
 {
-    return [[self tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
+    if (!self.frameRate) {
+        float fps = [[self tracksWithMediaType:AVMediaTypeVideo].lastObject nominalFrameRate];
+        self.frameRate = @(fps);
+    }
+    
+    return self.frameRate.floatValue;
 }
 
-- (UIImage *)getThumbailImageRequestAtTimeSecond:(CGFloat)timeBySecond
+- (void)getThumbailImageRequestAtTimeSecond:(Float64)timeBySecond imageBackBlock:(void (^)(UIImage *))imageBackBlock
 {
+    if (!self.imgGenerator) {
+        AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self];
+        imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
+        imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
 
-    AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self];
-    
-    CMTime time = CMTimeMake(timeBySecond, self.getFPS);
-    CMTime actualTime;//实际生成视频缩略图的时间
-    NSError *error = nil;
-    //使用对象方法，生成视频缩略图，注意生成的是CGImageRef类型，如果要在UIImageView上显示，需要转为UIImage
-    CGImageRef cgImage = [imageGenerator copyCGImageAtTime:time
-                                                actualTime:&actualTime
-                                                     error:&error];
-    if (error) {
-        
-        return nil;
+        self.imgGenerator = imageGenerator;
     }
-    UIImage *image = [UIImage imageWithCGImage:cgImage];
-    CGImageRelease(cgImage);
-    return image;
+    
+    NSArray *array = [NSArray arrayWithObject:[NSValue valueWithCMTime:CMTimeMake(timeBySecond * self.getFPS, self.getFPS)]];
+    [self.imgGenerator generateCGImagesAsynchronouslyForTimes:array completionHandler:^(CMTime requestedTime, CGImageRef  _Nullable image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError * _Nullable error) {
+        switch (result) {
+            case AVAssetImageGeneratorCancelled:
+                break;
+            case AVAssetImageGeneratorFailed:
+                break;
+            case AVAssetImageGeneratorSucceeded: {
+                UIImage *displayImage = [UIImage imageWithCGImage:image];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    !imageBackBlock ? : imageBackBlock(displayImage);
+                });
+            }
+                break;
+        }
+    }];
+}
+
+#pragma mark - getter和setter
+- (AVAssetImageGenerator *)imgGenerator
+{
+    return objc_getAssociatedObject(self, &cImgGenerator);
+}
+
+- (void)setImgGenerator:(AVAssetImageGenerator *)imgGenerator
+{
+    objc_setAssociatedObject(self, &cImgGenerator, imgGenerator, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSNumber *)frameRate
+{
+    return objc_getAssociatedObject(self, &cFrameRate);
+}
+
+- (void)setFrameRate:(NSNumber *)frameRate
+{
+    objc_setAssociatedObject(self, &cFrameRate, frameRate, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

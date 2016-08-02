@@ -11,6 +11,7 @@
 #import <Masonry.h>
 #import <BlocksKit+UIKit.h>
 #import "FMLClipFrameView.h"
+#import "AVAsset+FMLVideo.h"
 
 @interface FMLClipVideoViewController ()
 
@@ -185,8 +186,12 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         make.left.right.mas_equalTo(0);
         make.height.mas_equalTo(122);
     }];
-    [clipFrameView setDidDragView:^(UIImage *image) {
-        self.playerLayer.contents = (id) image.CGImage;
+    
+    WEAKSELF
+    [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
+        [asset getThumbailImageRequestAtTimeSecond:second imageBackBlock:^(UIImage *image) {    // 获取每一秒对应的图片
+            self.playerLayer.contents = (id) image.CGImage;
+        }];
     }];
 }
 
