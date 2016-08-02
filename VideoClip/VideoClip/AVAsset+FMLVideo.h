@@ -20,12 +20,12 @@
  *  @param imageCount     需要获取的图片个数
  *  @param imageBackBlock 得到一个图片时返回的block
  */
-- (void)getImagesCount:(NSUInteger)imageCount imageBackBlock:(void (^)(UIImage *))imageBackBlock;
+- (void)fml_getImagesCount:(NSUInteger)imageCount imageBackBlock:(void (^)(UIImage *))imageBackBlock;
 
 /**
  *  获取视频的总秒数
  */
-- (Float64)getSeconds;
+- (Float64)fml_getSeconds;
 
 /**
  *  将秒显示对应的缩略图
@@ -33,6 +33,6 @@
  *  @param timeBySecond   需要返回的第几秒图片
  *  @param imageBackBlock 返回的图片s
  */
-- (void)getThumbailImageRequestAtTimeSecond:(Float64)timeBySecond imageBackBlock:(void (^)(UIImage *))imageBackBlock;
+- (void)fml_getThumbailImageRequestAtTimeSecond:(Float64)timeBySecond imageBackBlock:(void (^)(UIImage *))imageBackBlock;
 
 @end

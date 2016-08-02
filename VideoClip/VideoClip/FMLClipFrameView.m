@@ -157,7 +157,7 @@
     CGFloat imageH = FMLImagesViewH;
     
     __weak typeof(self) weakSelf = self;
-    [self.asset getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
+    [self.asset fml_getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
         CGFloat imageX = i * imageW;
         
         CALayer *imageLayer = [CALayer new];
@@ -170,7 +170,7 @@
     }];
     
     // 现实秒数
-    self.totalSeconds = [self.asset getSeconds];
+    self.totalSeconds = [self.asset fml_getSeconds];
     self.endTimeLabel.text = [self secondsToStr:self.totalSeconds];
     self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", self.totalSeconds];
 }

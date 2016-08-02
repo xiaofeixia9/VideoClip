@@ -189,7 +189,8 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     WEAKSELF
     [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
-        [asset getThumbailImageRequestAtTimeSecond:second imageBackBlock:^(UIImage *image) {    // 获取每一秒对应的图片
+        [asset fml_getThumbailImageRequestAtTimeSecond:second imageBackBlock:^(UIImage *image) {    // 获取每一秒对应的图片
+            NSLog(@"%@", [NSThread currentThread]);
             self.playerLayer.contents = (id) image.CGImage;
         }];
     }];

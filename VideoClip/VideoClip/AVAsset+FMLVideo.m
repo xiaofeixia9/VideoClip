@@ -15,9 +15,9 @@ static void *cFrameRate = &cFrameRate;
 
 @implementation AVAsset (FMLVideo)
 
-- (void)getImagesCount:(NSUInteger)imageCount imageBackBlock:(void (^)(UIImage *))imageBackBlock
+- (void)fml_getImagesCount:(NSUInteger)imageCount imageBackBlock:(void (^)(UIImage *))imageBackBlock
 {
-    Float64 durationSeconds = [self getSeconds];
+    Float64 durationSeconds = [self fml_getSeconds];
     
     // 获取视频的帧数
     float fps = [self getFPS];
@@ -60,7 +60,7 @@ static void *cFrameRate = &cFrameRate;
     }];
 }
 
-- (Float64)getSeconds
+- (Float64)fml_getSeconds
 {
     CMTime cmtime = self.duration; //视频时间信息结构体
     return CMTimeGetSeconds(cmtime); //视频总秒数
@@ -77,12 +77,11 @@ static void *cFrameRate = &cFrameRate;
     return self.frameRate.floatValue;
 }
 
-- (void)getThumbailImageRequestAtTimeSecond:(Float64)timeBySecond imageBackBlock:(void (^)(UIImage *))imageBackBlock
+- (void)fml_getThumbailImageRequestAtTimeSecond:(Float64)timeBySecond imageBackBlock:(void (^)(UIImage *))imageBackBlock
 {
     if (!self.imgGenerator) {
         AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self];
-        imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
-        imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
+        imageGenerator.appliesPreferredTrackTransform = YES;
 
         self.imgGenerator = imageGenerator;
     }
