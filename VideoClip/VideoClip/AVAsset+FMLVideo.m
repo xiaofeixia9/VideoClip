@@ -82,6 +82,7 @@ static void *cFrameRate = &cFrameRate;
     if (!self.imgGenerator) {
         AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self];
         imageGenerator.appliesPreferredTrackTransform = YES;
+        imageGenerator.apertureMode =AVAssetImageGeneratorApertureModeEncodedPixels;
 
         self.imgGenerator = imageGenerator;
     }
@@ -127,3 +128,13 @@ static void *cFrameRate = &cFrameRate;
 }
 
 @end
+
+/**
+ CMTimeMake(time, timeScale)
+ 
+ time指的就是時間(不是秒),
+ 而時間要換算成秒就要看第二個參數timeScale了.
+ timeScale指的是1秒需要由幾個frame構成(可以視為fps),
+ 因此真正要表達的時間就會是 time / timeScale 才會是秒
+ 
+ */

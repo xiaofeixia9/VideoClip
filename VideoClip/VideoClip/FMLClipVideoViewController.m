@@ -17,6 +17,7 @@
 @interface FMLClipVideoViewController ()
 
 @property (nonatomic, strong) ALAsset *sourceAsset;
+@property (nonatomic, strong) AVAsset *avAsset;
 
 @property (nonatomic, strong) UIView *navBar;
 @property (nonatomic, strong) UIView *playerView;
@@ -131,6 +132,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     }];
     
     self.player = [AVPlayer new];
+    self.avAsset = avAsset;
     
     [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:HJClipVideoStatusContext];
 }
@@ -161,13 +163,9 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     // 代表视频的每个通道长度是否为0
     if ([asset tracksWithMediaType:AVMediaTypeVideo].count != 0) {
-        AVPlayerLayer *newPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:[self player]];
-        newPlayerLayer.frame = self.playerView.layer.bounds;
-        [newPlayerLayer setHidden:YES];
-        [self.playerView.layer addSublayer:newPlayerLayer];
-        self.playerLayer = newPlayerLayer;
+        [self.playerView.layer addSublayer:self.playerLayer];
         
-        [self.playerView.layer insertSublayer:self.imageLayer above:newPlayerLayer];
+        [self.playerView.layer insertSublayer:self.imageLayer above:self.playerLayer];
         [self addObserver:self forKeyPath:@"playerLayer.readyForDisplay" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:HJClipVideoLayerReadyForDisplay];
     } else {
         
@@ -193,15 +191,15 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     WEAKSELF
     [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
-        [asset fml_getThumbailImageRequestAtTimeSecond:second imageBackBlock:^(UIImage *image) {    // 获取每一秒对应的图片
-            CGRect clipRect = weakSelf.playerLayer.videoRect;
-            CGRect orginalRect = weakSelf.playerView.frame;
-            
-            [image fml_imageOrginalRect:orginalRect clipRect:clipRect completeBlock:^(UIImage *clipImage) {
-                weakSelf.imageLayer.hidden = NO;
-                weakSelf.imageLayer.contents = (id) clipImage.CGImage;
-            }];
-        }];
+        [weakSelf didDragSecond:second];
+    }];
+    
+    [clipFrameView setDidEndDragLeftView:^(Float64 second) {
+        
+    }];
+    
+    [clipFrameView setDidEndDragRightView:^(Float64 second) {
+        
     }];
 }
 
@@ -218,6 +216,23 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
                                                   otherButtonTitles:nil];
         [alertView show];
     }
+}
+
+#pragma mark - 事件
+
+/** 拖拽了几秒 */
+- (void)didDragSecond:(Float64)second
+{
+    WEAKSELF
+    [self.avAsset fml_getThumbailImageRequestAtTimeSecond:second imageBackBlock:^(UIImage *image) {    // 获取每一秒对应的图片
+        CGRect clipRect = weakSelf.playerLayer.videoRect;
+        CGRect orginalRect = weakSelf.playerView.frame;
+        
+        [image fml_imageOrginalRect:orginalRect clipRect:clipRect completeBlock:^(UIImage *clipImage) {
+            weakSelf.imageLayer.hidden = NO;
+            weakSelf.imageLayer.contents = (id) clipImage.CGImage;
+        }];
+    }];
 }
 
 #pragma mark - 监听状态

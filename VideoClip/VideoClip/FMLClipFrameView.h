@@ -13,6 +13,9 @@
 
 @property (nonatomic, copy) void (^didDragView)(Float64 second);
 
+@property (nonatomic, copy) void (^didEndDragLeftView)(Float64 second);
+@property (nonatomic, copy) void (^didEndDragRightView)(Float64 second);
+
 - (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(Float64)seconds;
 
 @end

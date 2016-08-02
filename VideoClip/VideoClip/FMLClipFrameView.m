@@ -215,6 +215,9 @@
         self.startTimeLabel.text = [self secondsToStr:leftSecond];
         
         !self.didDragView ? : self.didDragView(leftSecond);
+    } else if (ges.state == UIGestureRecognizerStateEnded) {
+        Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
+        !self.didEndDragLeftView ? : self.didEndDragLeftView(leftSecond);
     }
 }
 
@@ -250,6 +253,9 @@
         self.endTimeLabel.text = [self secondsToStr:rightSecond];
         
         !self.didDragView ? : self.didDragView(rightSecond);
+    } else if (ges.state == UIGestureRecognizerStateEnded) {
+        Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
+        !self.didEndDragRightView ? : self.didEndDragRightView(rightSecond);
     }
 }
 
