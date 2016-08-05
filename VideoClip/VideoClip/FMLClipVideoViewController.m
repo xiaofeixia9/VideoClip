@@ -22,7 +22,11 @@
 @property (nonatomic, strong) UIView *navBar;
 @property (nonatomic, strong) UIView *playerView;
 @property (nonatomic, strong) FMLClipFrameView *clipFrameView;
+@property (nonatomic, assign) Float64 startSecond;  ///< leftDragView对应的秒
+@property (nonatomic, assign) Float64 endSecond;   ///< rightDragView对应的秒
+@property (nonatomic, assign) float fps;
 
+@property (nonatomic, strong) id observer;
 @property (nonatomic, strong) AVPlayer *player;                     ///< 播放器
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;    ///< 播放的layer
 @property (nonatomic, strong) CALayer *imageLayer;              ///< 显示图片的layer
@@ -135,6 +139,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     self.avAsset = avAsset;
     
     [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:HJClipVideoStatusContext];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
 }
 
 - (void)setUpPlaybackOfAsset:(AVAsset *)asset withKeys:(NSArray *)keys
@@ -168,12 +173,27 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         [self.playerView.layer insertSublayer:self.imageLayer above:self.playerLayer];
         [self addObserver:self forKeyPath:@"playerLayer.readyForDisplay" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:HJClipVideoLayerReadyForDisplay];
     } else {
-        
     }
     
     // 创建一个AVPlayerItem资源 并将AVPlayer替换成创建的资源
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
+    
+    self.endSecond = CMTimeGetSeconds(asset.duration); // 默认是总秒数
+    self.fps = asset.fml_getFPS;
+    
+    // 监听时间
+    WEAKSELF
+    self.observer = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1 * self.fps, self.fps) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        Float64 seconds = CMTimeGetSeconds(time);
+        
+        // rate ==1.0，表示正在播放；rate == 0.0，暂停；rate == -1.0，播放失败
+        if (weakSelf.player.rate > 0 && weakSelf.player.error == nil && seconds <= weakSelf.endSecond) {
+            [weakSelf.clipFrameView setProgressPositionWithSecond:seconds];
+        }  else if (seconds >= weakSelf.endSecond) {
+            [weakSelf playerItemDidReachEnd];
+        }
+    }];
     
     [self setUpClipFrameView:asset];
 }
@@ -196,19 +216,17 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         }
     }];
     
-    float fps = asset.fml_getFPS;
     [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
         [weakSelf didDragSecond:second];
     }];
     
-    
     [clipFrameView setDidEndDragLeftView:^(Float64 second) {    // 结束左边view拖拽
-        
-        [weakSelf.player seekToTime:CMTimeMake(fps * second, fps)];
+        weakSelf.startSecond = second;
+        [weakSelf.player seekToTime:CMTimeMake(weakSelf.fps * second, weakSelf.fps)];
     }];
     
     [clipFrameView setDidEndDragRightView:^(Float64 second) {   // 结束右边view拖拽
-        
+        weakSelf.endSecond = second;
     }];
 }
 
@@ -242,6 +260,12 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
             weakSelf.imageLayer.contents = (id) clipImage.CGImage;
         }];
     }];
+}
+
+- (void)playerItemDidReachEnd
+{
+    [self.player seekToTime:CMTimeMake(self.fps * self.startSecond, self.fps)];
+    [self.player pause];
 }
 
 #pragma mark - 监听状态
@@ -281,6 +305,8 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     [self removeObserver:self forKeyPath:@"player.currentItem.status" context:HJClipVideoStatusContext];
     [self removeObserver:self forKeyPath:@"playerLayer.readyForDisplay" context:HJClipVideoLayerReadyForDisplay];
     
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.player removeTimeObserver:self.observer];
     [self.playerLayer removeFromSuperlayer];
     
     [self.player pause];

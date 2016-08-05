@@ -23,14 +23,15 @@
 @property (nonatomic, strong) AVAsset *asset;
 @property (nonatomic, assign) Float64 minSeconds;  ///< 最少多少秒
 
-@property (nonatomic, strong) UILabel *startTimeLabel;  ///< 开始秒数
-@property (nonatomic, strong) UILabel *endTimeLabel;   ///< 结束秒数
-@property (nonatomic, strong) UILabel *clipSecondLabel; ///< 一共截多少秒
+@property (nonatomic, weak) UILabel *startTimeLabel;  ///< 开始秒数
+@property (nonatomic, weak) UILabel *endTimeLabel;   ///< 结束秒数
+@property (nonatomic, weak) UILabel *clipSecondLabel; ///< 一共截多少秒
 
-@property (nonatomic, strong) UIView *imagesView;   ///< 显示帧图片列表
+@property (nonatomic, weak) UIView *imagesView;   ///< 显示帧图片列表
 
-@property (nonatomic, strong) UIView *leftDragView;     ///< 左边时间拖拽view
-@property (nonatomic, strong) UIView *rightDragView;  ///< 右边时间拖拽view
+@property (nonatomic, weak) UIView *leftDragView;     ///< 左边时间拖拽view
+@property (nonatomic, weak) UIView *rightDragView;  ///< 右边时间拖拽view
+@property (nonatomic, weak) UIView *progressBarView; ///< 进度播放view
 
 @end
 
@@ -148,6 +149,18 @@
         make.left.mas_equalTo(rightDragView.mas_right);
         make.top.bottom.mas_equalTo(imagesBackView);
     }];
+    
+    UIView *progressBarView = [UIView new];
+    progressBarView.hidden = YES;
+    progressBarView.layer.contents = (id) [UIImage imageNamed:@"cut_bar_progress"].CGImage;
+    [self addSubview:progressBarView];
+    self.progressBarView = progressBarView;
+    [progressBarView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(8);
+        make.height.mas_equalTo(FMLImagesViewH);
+        make.right.mas_equalTo(leftDragView.mas_left);
+        make.top.mas_equalTo(self.imagesView);
+    }];
 }
 
 - (void)initData
@@ -190,6 +203,8 @@
     switch (ges.state) {
         case UIGestureRecognizerStateBegan:
             !self.didStartDragView ? : self.didStartDragView();
+            
+            self.progressBarView.hidden = YES;
             break;
         case UIGestureRecognizerStateChanged: {
         
@@ -235,6 +250,8 @@
     switch (ges.state) {
         case UIGestureRecognizerStateBegan:
             !self.didStartDragView ? : self.didStartDragView();
+            
+            self.progressBarView.hidden = YES;
             break;
         case UIGestureRecognizerStateChanged: {
             CGPoint translation = [ges translationInView:self];
@@ -274,6 +291,18 @@
         default:
             break;
     }
+}
+
+#pragma mark - 自定义事件
+- (void)setProgressPositionWithSecond:(Float64)second
+{
+    CGFloat leftX = (second / self.totalSeconds) * (self.width);
+    
+    [UIView animateWithDuration:0.01 animations:^{
+        self.progressBarView.transform = CGAffineTransformMakeTranslation(leftX, 0);
+    }];
+    
+    self.progressBarView.hidden = NO;
 }
 
 @end

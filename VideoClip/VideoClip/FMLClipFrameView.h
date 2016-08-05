@@ -20,4 +20,11 @@
 
 - (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(Float64)seconds;
 
+/**
+ *  根据秒数计算出进度条位置
+ *
+ *  @param second 秒数
+ */
+- (void)setProgressPositionWithSecond:(Float64)second;
+
 @end
