@@ -184,7 +184,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     // 监听时间
     WEAKSELF
-    self.observer = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1 * self.fps, self.fps) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    self.observer = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         Float64 seconds = CMTimeGetSeconds(time);
         
         // rate ==1.0，表示正在播放；rate == 0.0，暂停；rate == -1.0，播放失败
@@ -222,7 +222,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     [clipFrameView setDidEndDragLeftView:^(Float64 second) {    // 结束左边view拖拽
         weakSelf.startSecond = second;
-        [weakSelf.player seekToTime:CMTimeMake(weakSelf.fps * second, weakSelf.fps)];
+        [weakSelf.player seekToTime:CMTimeMake(second, 1)];
     }];
     
     [clipFrameView setDidEndDragRightView:^(Float64 second) {   // 结束右边view拖拽
@@ -264,7 +264,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
 - (void)playerItemDidReachEnd
 {
-    [self.player seekToTime:CMTimeMake(self.fps * self.startSecond, self.fps)];
+    [self.player seekToTime:CMTimeMake(self.startSecond, 1)];
     [self.player pause];
 }
 

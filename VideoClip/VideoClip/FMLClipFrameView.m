@@ -296,11 +296,9 @@
 #pragma mark - 自定义事件
 - (void)setProgressPositionWithSecond:(Float64)second
 {
-    CGFloat leftX = (second / self.totalSeconds) * (self.width);
+    CGFloat leftX = (second / self.totalSeconds) * (self.width + 2 * self.progressBarView.width);
     
-    [UIView animateWithDuration:0.01 animations:^{
-        self.progressBarView.transform = CGAffineTransformMakeTranslation(leftX, 0);
-    }];
+    self.progressBarView.x = leftX - self.progressBarView.width;
     
     self.progressBarView.hidden = NO;
 }
