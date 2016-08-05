@@ -12,8 +12,6 @@
 
 - (void)fml_imageOrginalRect:(CGRect)orginalRect clipRect:(CGRect)clipRect completeBlock:(void (^)(UIImage *))imageBackBlock
 {
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        
         CGSize orginalSize = orginalRect.size;
         UIGraphicsBeginImageContextWithOptions(orginalSize, NO, [UIScreen mainScreen].scale);
         
@@ -25,11 +23,8 @@
         UIImage *resultImg = UIGraphicsGetImageFromCurrentImageContext();
         
         UIGraphicsEndImageContext();
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            !imageBackBlock ? : imageBackBlock(resultImg);
-        });
-    });
+    
+        !imageBackBlock ? : imageBackBlock(resultImg);
 }
 
 @end

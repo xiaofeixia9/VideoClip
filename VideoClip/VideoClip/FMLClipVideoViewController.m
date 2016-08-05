@@ -199,7 +199,6 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     float fps = asset.fml_getFPS;
     [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
         [weakSelf didDragSecond:second];
-        [weakSelf.player seekToTime:CMTimeMake(fps * second, fps)];
     }];
     
     
@@ -239,7 +238,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         CGRect orginalRect = weakSelf.playerView.frame;
         
         [image fml_imageOrginalRect:orginalRect clipRect:clipRect completeBlock:^(UIImage *clipImage) {
-//            weakSelf.imageLayer.hidden = NO;
+            weakSelf.imageLayer.hidden = NO;
             weakSelf.imageLayer.contents = (id) clipImage.CGImage;
         }];
     }];
