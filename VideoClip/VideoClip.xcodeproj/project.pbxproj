@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */; };
 		2518FFF31D48CDBB00F8C649 /* AVAsset+FMLVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */; };
+		25587A681D508C3A0009E64F /* UIImage+FMLClipRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 25587A671D508C3A0009E64F /* UIImage+FMLClipRect.m */; };
 		2575646A1D49B9F800D58AB2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 257564691D49B9F800D58AB2 /* libz.tbd */; };
 		2575646D1D49E50800D58AB2 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 2575646C1D49E50800D58AB2 /* UIView+Extension.m */; };
 		9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */; };
@@ -48,6 +49,8 @@
 		2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLClipFrameView.m; sourceTree = "<group>"; };
 		2518FFF11D48CDBB00F8C649 /* AVAsset+FMLVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AVAsset+FMLVideo.h"; sourceTree = "<group>"; };
 		2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AVAsset+FMLVideo.m"; sourceTree = "<group>"; };
+		25587A661D508C3A0009E64F /* UIImage+FMLClipRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+FMLClipRect.h"; sourceTree = "<group>"; };
+		25587A671D508C3A0009E64F /* UIImage+FMLClipRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FMLClipRect.m"; sourceTree = "<group>"; };
 		257564691D49B9F800D58AB2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2575646B1D49E50800D58AB2 /* UIView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		2575646C1D49E50800D58AB2 /* UIView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
@@ -160,6 +163,8 @@
 				2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */,
 				2518FFF11D48CDBB00F8C649 /* AVAsset+FMLVideo.h */,
 				2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */,
+				25587A661D508C3A0009E64F /* UIImage+FMLClipRect.h */,
+				25587A671D508C3A0009E64F /* UIImage+FMLClipRect.m */,
 				B56105E21D432ECB00FFD1BD /* Supporting Files */,
 			);
 			path = VideoClip;
@@ -388,6 +393,7 @@
 				B56106171D433E9900FFD1BD /* FMLVideoChoiceCell.m in Sources */,
 				2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */,
 				B56105E41D432ECB00FFD1BD /* main.m in Sources */,
+				25587A681D508C3A0009E64F /* UIImage+FMLClipRect.m in Sources */,
 				2575646D1D49E50800D58AB2 /* UIView+Extension.m in Sources */,
 				2518FFF31D48CDBB00F8C649 /* AVAsset+FMLVideo.m in Sources */,
 			);
