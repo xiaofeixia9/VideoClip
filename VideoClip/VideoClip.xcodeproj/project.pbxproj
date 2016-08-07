@@ -24,6 +24,7 @@
 		B56106171D433E9900FFD1BD /* FMLVideoChoiceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B56106161D433E9900FFD1BD /* FMLVideoChoiceCell.m */; };
 		B56106191D433EBE00FFD1BD /* FMLVideoChoiceCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B56106181D433EBE00FFD1BD /* FMLVideoChoiceCell.xib */; };
 		B561061C1D434B2600FFD1BD /* FMLClipVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B561061B1D434B2600FFD1BD /* FMLClipVideoViewController.m */; };
+		B59CA0231D5785FD003B123F /* FMLVideoCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = B59CA0221D5785FD003B123F /* FMLVideoCommand.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,8 @@
 		B56106181D433EBE00FFD1BD /* FMLVideoChoiceCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FMLVideoChoiceCell.xib; sourceTree = "<group>"; };
 		B561061A1D434B2600FFD1BD /* FMLClipVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLClipVideoViewController.h; sourceTree = "<group>"; };
 		B561061B1D434B2600FFD1BD /* FMLClipVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLClipVideoViewController.m; sourceTree = "<group>"; };
+		B59CA0211D5785FD003B123F /* FMLVideoCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLVideoCommand.h; sourceTree = "<group>"; };
+		B59CA0221D5785FD003B123F /* FMLVideoCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLVideoCommand.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +164,8 @@
 				B561061B1D434B2600FFD1BD /* FMLClipVideoViewController.m */,
 				2518FFE61D48C07600F8C649 /* FMLClipFrameView.h */,
 				2518FFE71D48C07600F8C649 /* FMLClipFrameView.m */,
+				B59CA0211D5785FD003B123F /* FMLVideoCommand.h */,
+				B59CA0221D5785FD003B123F /* FMLVideoCommand.m */,
 				2518FFF11D48CDBB00F8C649 /* AVAsset+FMLVideo.h */,
 				2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */,
 				25587A661D508C3A0009E64F /* UIImage+FMLClipRect.h */,
@@ -274,7 +279,7 @@
 				TargetAttributes = {
 					B56105DE1D432ECB00FFD1BD = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 5J7737A569;
+						DevelopmentTeam = 665MJGNYA9;
 					};
 					B56105F71D432ECB00FFD1BD = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -394,6 +399,7 @@
 				2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */,
 				B56105E41D432ECB00FFD1BD /* main.m in Sources */,
 				25587A681D508C3A0009E64F /* UIImage+FMLClipRect.m in Sources */,
+				B59CA0231D5785FD003B123F /* FMLVideoCommand.m in Sources */,
 				2575646D1D49E50800D58AB2 /* UIView+Extension.m in Sources */,
 				2518FFF31D48CDBB00F8C649 /* AVAsset+FMLVideo.m in Sources */,
 			);

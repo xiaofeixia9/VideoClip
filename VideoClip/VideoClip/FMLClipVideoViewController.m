@@ -13,6 +13,7 @@
 #import "FMLClipFrameView.h"
 #import "AVAsset+FMLVideo.h"
 #import "UIImage+FMLClipRect.h"
+#import "FMLVideoCommand.h"
 
 @interface FMLClipVideoViewController ()
 
@@ -30,6 +31,8 @@
 @property (nonatomic, strong) AVPlayer *player;                     ///< 播放器
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;    ///< 播放的layer
 @property (nonatomic, strong) CALayer *imageLayer;              ///< 显示图片的layer
+
+@property (nonatomic, strong) AVMutableComposition *composition;
 
 @end
 
@@ -92,6 +95,9 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     UIButton *nextBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [nextBtn setTitle:@"Next" forState:UIControlStateNormal];
     [nextBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [nextBtn bk_addEventHandler:^(id sender) {
+        [[FMLVideoCommand shareVideoTrimCommand] trimAsset:weakSelf.avAsset WithStartSecond:weakSelf.startSecond andEndSecond:weakSelf.endSecond];
+    } forControlEvents:UIControlEventTouchUpInside];
     [navBar addSubview:nextBtn];
     [nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.mas_equalTo(navBar.mas_centerY);
@@ -140,6 +146,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:HJClipVideoStatusContext];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(editCommandCompletionNotificationReceiver:) name:FMLEditCommandCompletionNotification object:nil];
 }
 
 - (void)setUpPlaybackOfAsset:(AVAsset *)asset withKeys:(NSArray *)keys
@@ -269,6 +276,19 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 }
 
 #pragma mark - 监听状态
+- (void)editCommandCompletionNotificationReceiver:(NSNotification*) notification
+{
+    if ([[notification name] isEqualToString:FMLEditCommandCompletionNotification]) {
+        self.composition = [[notification object] mutableComposition];
+        
+        dispatch_async( dispatch_get_main_queue(), ^{
+            AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:self.composition];
+            self.avAsset = playerItem.asset;
+            [[self player] replaceCurrentItemWithPlayerItem:playerItem];
+        });
+    }
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
     if (context == HJClipVideoStatusContext) {
