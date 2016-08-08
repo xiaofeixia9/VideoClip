@@ -174,7 +174,7 @@
     
     [self.asset fml_getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
         
-        UIImage *scaleImg = [UIImage scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到20k进行显示
+        UIImage *scaleImg = [UIImage fml_scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到最大20k进行显示
         CGFloat imageX = i * imageW;
         
         CALayer *imageLayer = [CALayer new];
@@ -182,10 +182,6 @@
         imageLayer.frame = CGRectMake(imageX, 0, imageW, imageH);
         
         [weakSelf.imagesView.layer addSublayer:imageLayer];
-        
-//        NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
-//        path = [path stringByAppendingPathComponent:[NSString stringWithFormat:@"%zd", i]];
-//        [UIImagePNGRepresentation(scaleImg) writeToFile:path atomically:YES];
         
         i++;
     }];

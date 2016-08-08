@@ -27,7 +27,7 @@
         !imageBackBlock ? : imageBackBlock(resultImg);
 }
 
-+ (UIImage *)scaleImage:(UIImage *)image maxDataSize:(NSUInteger)dataSize
++ (UIImage *)fml_scaleImage:(UIImage *)image maxDataSize:(NSUInteger)dataSize
 {
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
     if (imageData.length > dataSize) {
