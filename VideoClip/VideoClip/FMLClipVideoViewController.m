@@ -14,6 +14,7 @@
 #import "AVAsset+FMLVideo.h"
 #import "UIImage+FMLClipRect.h"
 #import "FMLVideoCommand.h"
+#import "FMLTestViewController.h"
 
 @interface FMLClipVideoViewController ()
 
@@ -282,9 +283,15 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         self.composition = [[notification object] mutableComposition];
         
         dispatch_async( dispatch_get_main_queue(), ^{
+//            AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:self.composition];
+//            self.avAsset = playerItem.asset;
+//            [[self player] replaceCurrentItemWithPlayerItem:playerItem];
+            
             AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:self.composition];
-            self.avAsset = playerItem.asset;
-            [[self player] replaceCurrentItemWithPlayerItem:playerItem];
+            
+            FMLTestViewController *testVC = [FMLTestViewController new];
+            testVC.avAsset = playerItem.asset;
+            [self presentViewController:testVC animated:YES completion:nil];
         });
     }
 }
