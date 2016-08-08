@@ -12,7 +12,6 @@
 		25587A681D508C3A0009E64F /* UIImage+FMLClipRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 25587A671D508C3A0009E64F /* UIImage+FMLClipRect.m */; };
 		2575646A1D49B9F800D58AB2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 257564691D49B9F800D58AB2 /* libz.tbd */; };
 		2575646D1D49E50800D58AB2 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 2575646C1D49E50800D58AB2 /* UIView+Extension.m */; };
-		25FAD8441D582995005D9980 /* FMLTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 25FAD8431D582995005D9980 /* FMLTestViewController.m */; };
 		9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */; };
 		B56105E41D432ECB00FFD1BD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E31D432ECB00FFD1BD /* main.m */; };
 		B56105E71D432ECB00FFD1BD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B56105E61D432ECB00FFD1BD /* AppDelegate.m */; };
@@ -57,8 +56,6 @@
 		2575646B1D49E50800D58AB2 /* UIView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		2575646C1D49E50800D58AB2 /* UIView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
 		2575646E1D49E58A00D58AB2 /* VideoClip.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoClip.pch; sourceTree = "<group>"; };
-		25FAD8421D582995005D9980 /* FMLTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLTestViewController.h; sourceTree = "<group>"; };
-		25FAD8431D582995005D9980 /* FMLTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLTestViewController.m; sourceTree = "<group>"; };
 		52D1C0BED47F03B5BA90F2ED /* Pods-VideoClip.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.release.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.release.xcconfig"; sourceTree = "<group>"; };
 		A85F529924F3335758CCFCD2 /* Pods-VideoClip.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClip.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VideoClip/Pods-VideoClip.debug.xcconfig"; sourceTree = "<group>"; };
 		B56105DF1D432ECB00FFD1BD /* VideoClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -181,8 +178,6 @@
 		B56105E21D432ECB00FFD1BD /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				25FAD8421D582995005D9980 /* FMLTestViewController.h */,
-				25FAD8431D582995005D9980 /* FMLTestViewController.m */,
 				2575646B1D49E50800D58AB2 /* UIView+Extension.h */,
 				2575646C1D49E50800D58AB2 /* UIView+Extension.m */,
 				2575646E1D49E58A00D58AB2 /* VideoClip.pch */,
@@ -403,7 +398,6 @@
 				B56106171D433E9900FFD1BD /* FMLVideoChoiceCell.m in Sources */,
 				2518FFE81D48C07600F8C649 /* FMLClipFrameView.m in Sources */,
 				B56105E41D432ECB00FFD1BD /* main.m in Sources */,
-				25FAD8441D582995005D9980 /* FMLTestViewController.m in Sources */,
 				25587A681D508C3A0009E64F /* UIImage+FMLClipRect.m in Sources */,
 				B59CA0231D5785FD003B123F /* FMLVideoCommand.m in Sources */,
 				2575646D1D49E50800D58AB2 /* UIView+Extension.m in Sources */,

@@ -83,6 +83,7 @@
     }];
     
     UIView *imagesView = [UIView new];
+    imagesView.backgroundColor = [UIColor whiteColor];
     [self addSubview:imagesView];
     self.imagesView = imagesView;
     [imagesView mas_makeConstraints:^(MASConstraintMaker *make) {

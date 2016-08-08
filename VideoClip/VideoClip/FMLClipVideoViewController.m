@@ -14,7 +14,6 @@
 #import "AVAsset+FMLVideo.h"
 #import "UIImage+FMLClipRect.h"
 #import "FMLVideoCommand.h"
-#import "FMLTestViewController.h"
 
 @interface FMLClipVideoViewController ()
 
@@ -26,7 +25,6 @@
 @property (nonatomic, strong) FMLClipFrameView *clipFrameView;
 @property (nonatomic, assign) Float64 startSecond;  ///< leftDragView对应的秒
 @property (nonatomic, assign) Float64 endSecond;   ///< rightDragView对应的秒
-@property (nonatomic, assign) float fps;
 
 @property (nonatomic, strong) id observer;
 @property (nonatomic, strong) AVPlayer *player;                     ///< 播放器
@@ -190,7 +188,6 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
     
     self.endSecond = CMTimeGetSeconds(asset.duration); // 默认是总秒数
-    self.fps = asset.fml_getFPS;
     
     // 监听时间
     WEAKSELF
@@ -232,7 +229,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     [clipFrameView setDidEndDragLeftView:^(Float64 second) {    // 结束左边view拖拽
         weakSelf.startSecond = second;
-        [weakSelf.player seekToTime:CMTimeMake(second, 1)];
+        [weakSelf.player seekToTime:CMTimeMake(second, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
     }];
     
     [clipFrameView setDidEndDragRightView:^(Float64 second) {   // 结束右边view拖拽
@@ -274,8 +271,9 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
 - (void)playerItemDidReachEnd
 {
-    [self.player seekToTime:CMTimeMake(self.startSecond, 1)];
-    [self.player pause];
+    [self.player seekToTime:CMTimeMake(self.startSecond, 1)completionHandler:^(BOOL finished) {
+        [self.player pause];
+    }];
 }
 
 #pragma mark - 监听状态
@@ -295,7 +293,9 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 {
     if ([[notification name] isEqualToString:FMLExportCommandCompletionNotification]) {
         NSURL *url = [[notification object] exportSession].outputURL;
-        NSLog(@"%@", url.absoluteString);
+        dispatch_async( dispatch_get_main_queue(), ^{
+            
+        });
     }
 }
 
