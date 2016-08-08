@@ -41,6 +41,7 @@ static void *cFrameRate = &cFrameRate;
     // 防止时间出现偏差
     imgGenerator.requestedTimeToleranceBefore = kCMTimeZero;
     imgGenerator.requestedTimeToleranceAfter = kCMTimeZero;
+    imgGenerator.appliesPreferredTrackTransform = YES;  // 截图的时候调整到正确的方向
     
     [imgGenerator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(CMTime requestedTime, CGImageRef  _Nullable image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError * _Nullable error) {
         switch (result) {
@@ -127,6 +128,8 @@ static void *cFrameRate = &cFrameRate;
 }
 
 @end
+
+
 
 /**
  CMTimeMake(time, timeScale)

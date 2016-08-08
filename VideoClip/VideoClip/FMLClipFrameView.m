@@ -11,6 +11,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "AVAsset+FMLVideo.h"
 #import <BlocksKit+UIKit.h>
+#import "UIImage+FMLClipRect.h"
 
 #define FMLLineW 3                // 线宽
 #define FMLImagesViewH 40  // 预览图高度
@@ -158,7 +159,7 @@
     [progressBarView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(8);
         make.height.mas_equalTo(FMLImagesViewH);
-        make.right.mas_equalTo(leftDragView.mas_left);
+        make.left.mas_equalTo(0);
         make.top.mas_equalTo(self.imagesView);
     }];
 }
@@ -170,14 +171,21 @@
     CGFloat imageH = FMLImagesViewH;
     
     __weak typeof(self) weakSelf = self;
+    
     [self.asset fml_getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
+        
+        UIImage *scaleImg = [UIImage scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到20k进行显示
         CGFloat imageX = i * imageW;
         
         CALayer *imageLayer = [CALayer new];
-        imageLayer.contents = (id) image.CGImage;
+        imageLayer.contents = (id) scaleImg.CGImage;
         imageLayer.frame = CGRectMake(imageX, 0, imageW, imageH);
         
         [weakSelf.imagesView.layer addSublayer:imageLayer];
+        
+//        NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+//        path = [path stringByAppendingPathComponent:[NSString stringWithFormat:@"%zd", i]];
+//        [UIImagePNGRepresentation(scaleImg) writeToFile:path atomically:YES];
         
         i++;
     }];
@@ -296,9 +304,11 @@
 #pragma mark - 自定义事件
 - (void)setProgressPositionWithSecond:(Float64)second
 {
-    CGFloat leftX = (second / self.totalSeconds) * (self.width + 2 * self.progressBarView.width);
+    CGFloat leftX = (second / self.totalSeconds) * self.width + self.progressBarView.width;
     
-    self.progressBarView.x = leftX - self.progressBarView.width;
+    [self.progressBarView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(leftX);
+    }];
     
     self.progressBarView.hidden = NO;
 }

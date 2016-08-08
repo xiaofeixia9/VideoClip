@@ -19,4 +19,6 @@
  */
 - (void)fml_imageOrginalRect:(CGRect)orginalRect clipRect:(CGRect)clipRect completeBlock:(void (^)(UIImage *))imageBackBlock;
 
++ (UIImage *)scaleImage:(UIImage *)image maxDataSize:(NSUInteger)dataSize;
+
 @end

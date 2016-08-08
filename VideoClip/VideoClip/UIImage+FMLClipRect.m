@@ -27,4 +27,32 @@
         !imageBackBlock ? : imageBackBlock(resultImg);
 }
 
++ (UIImage *)scaleImage:(UIImage *)image maxDataSize:(NSUInteger)dataSize
+{
+    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+    if (imageData.length > dataSize) {
+        float scaleSize = (dataSize/1.0)/(imageData.length);
+        scaleSize = 0.9 * sqrtf(scaleSize);
+        return [self scaleImage:image toScale:scaleSize maxDataSize:dataSize];
+    } else {
+        return image;
+    }
+}
+
++ (UIImage *)scaleImage:(UIImage *)image toScale:(float)scaleSize maxDataSize:(NSUInteger)dataSize
+{
+    UIGraphicsBeginImageContext(CGSizeMake(image.size.width * scaleSize - 1, image.size.height * scaleSize - 1));
+    [image drawInRect:CGRectMake(0, 0, image.size.width * scaleSize, image.size.height * scaleSize)];
+    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    NSData* imageData = UIImageJPEGRepresentation(scaledImage, 1.0);
+    if (imageData.length > dataSize) {
+        float scale = (dataSize / 1.0) / (imageData.length);
+        scale = 0.9 * sqrtf(scale);
+        return [self scaleImage:scaledImage toScale:scale maxDataSize:dataSize];
+    }
+    return scaledImage;
+}
+
 @end
