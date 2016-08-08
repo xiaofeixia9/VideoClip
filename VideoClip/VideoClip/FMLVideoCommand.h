@@ -12,9 +12,20 @@
 @interface FMLVideoCommand : NSObject
 
 @property (nonatomic, strong, readonly) AVMutableComposition *mutableComposition;
+@property (nonatomic, strong, readonly) AVAssetExportSession *exportSession;
 
-+ (instancetype)shareVideoTrimCommand;
+- (instancetype)initVideoCommendWithComposition:(AVMutableComposition *)composition;
 
+/**
+ *  裁剪资源
+ *
+ *  @param asset       被裁减的资源
+ *  @param startSecond 开始的秒数
+ *  @param endSecond   结束的秒数
+ */
 - (void)trimAsset:(AVAsset *)asset WithStartSecond:(Float64)startSecond andEndSecond:(Float64)endSecond;
+
+/** 导出资源 */
+- (void)exportAsset;
 
 @end

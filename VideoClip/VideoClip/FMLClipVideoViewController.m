@@ -97,7 +97,8 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     [nextBtn setTitle:@"Next" forState:UIControlStateNormal];
     [nextBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [nextBtn bk_addEventHandler:^(id sender) {
-        [[FMLVideoCommand shareVideoTrimCommand] trimAsset:weakSelf.avAsset WithStartSecond:weakSelf.startSecond andEndSecond:weakSelf.endSecond];
+       FMLVideoCommand *videoCommand = [[FMLVideoCommand alloc] init];
+        [videoCommand trimAsset:weakSelf.avAsset WithStartSecond:weakSelf.startSecond andEndSecond:weakSelf.endSecond];
     } forControlEvents:UIControlEventTouchUpInside];
     [navBar addSubview:nextBtn];
     [nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -148,6 +149,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:HJClipVideoStatusContext];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(editCommandCompletionNotificationReceiver:) name:FMLEditCommandCompletionNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(exportCommandCompletionNotificationReceiver:) name:FMLExportCommandCompletionNotification object:nil];
 }
 
 - (void)setUpPlaybackOfAsset:(AVAsset *)asset withKeys:(NSArray *)keys
@@ -283,16 +285,17 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         self.composition = [[notification object] mutableComposition];
         
         dispatch_async( dispatch_get_main_queue(), ^{
-//            AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:self.composition];
-//            self.avAsset = playerItem.asset;
-//            [[self player] replaceCurrentItemWithPlayerItem:playerItem];
-            
-            AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:self.composition];
-            
-            FMLTestViewController *testVC = [FMLTestViewController new];
-            testVC.avAsset = playerItem.asset;
-            [self presentViewController:testVC animated:YES completion:nil];
+            FMLVideoCommand *videoCommand = [[FMLVideoCommand alloc] initVideoCommendWithComposition:self.composition];
+            [videoCommand exportAsset];
         });
+    }
+}
+
+- (void)exportCommandCompletionNotificationReceiver:(NSNotification*) notification
+{
+    if ([[notification name] isEqualToString:FMLExportCommandCompletionNotification]) {
+        NSURL *url = [[notification object] exportSession].outputURL;
+        NSLog(@"%@", url.absoluteString);
     }
 }
 

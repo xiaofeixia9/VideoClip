@@ -7,18 +7,17 @@
 //
 
 #import "FMLVideoCommand.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @implementation FMLVideoCommand
 
-static id _instance;
-+ (instancetype)shareVideoTrimCommand
+- (instancetype)initVideoCommendWithComposition:(AVMutableComposition *)composition
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _instance = [[self alloc] init];
-    });
+    if (self = [super init]) {
+        _mutableComposition = composition;
+    }
     
-    return _instance;
+    return self;
 }
 
 - (void)trimAsset:(AVAsset *)asset WithStartSecond:(Float64)startSecond andEndSecond:(Float64)endSecond
@@ -42,16 +41,67 @@ static id _instance;
     _mutableComposition = [AVMutableComposition composition];
     
     if(assetVideoTrack != nil) {
-        AVMutableCompositionTrack *compositionVideoTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+        AVMutableCompositionTrack *compositionVideoTrack = [self.mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
         [compositionVideoTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetVideoTrack atTime:insertionPoint error:&error];
     }
     if(assetAudioTrack != nil) {
-        AVMutableCompositionTrack *compositionAudioTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        AVMutableCompositionTrack *compositionAudioTrack = [self.mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
         [compositionAudioTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetAudioTrack atTime:insertionPoint error:&error];
     }
     
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:FMLEditCommandCompletionNotification object:self];
+}
+
+- (void)exportAsset
+{
+    // Step 1
+    // Create an outputURL to which the exported movie will be saved
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *outputURL = paths[0];
+    NSFileManager *manager = [NSFileManager defaultManager];
+    [manager createDirectoryAtPath:outputURL withIntermediateDirectories:YES attributes:nil error:nil];
+    outputURL = [outputURL stringByAppendingPathComponent:@"output.mp4"];
+    // Remove Existing File
+    [manager removeItemAtPath:outputURL error:nil];
+    
+    // Step 2
+    // Create an export session with the composition and write the exported movie to the photo library
+    _exportSession = [[AVAssetExportSession alloc] initWithAsset:[self.mutableComposition copy] presetName:AVAssetExportPreset1280x720];
+    
+    self.exportSession.outputURL = [NSURL fileURLWithPath:outputURL];
+    self.exportSession.outputFileType=AVFileTypeQuickTimeMovie;
+    
+    [self.exportSession exportAsynchronouslyWithCompletionHandler:^(void){
+        switch (self.exportSession.status) {
+            case AVAssetExportSessionStatusCompleted:
+                [self writeVideoToPhotoLibrary:[NSURL fileURLWithPath:outputURL]];
+                // Step 3
+                // Notify AVSEViewController about export completion
+                [[NSNotificationCenter defaultCenter]
+                 postNotificationName:FMLExportCommandCompletionNotification
+                 object:self];
+                break;
+            case AVAssetExportSessionStatusFailed:
+                NSLog(@"Failed:%@", self.exportSession.error);
+                break;
+            case AVAssetExportSessionStatusCancelled:
+                NSLog(@"Canceled:%@", self.exportSession.error);
+                break;
+            default:
+                break;
+        }
+    }];
+}
+
+- (void)writeVideoToPhotoLibrary:(NSURL *)url
+{
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    
+    [library writeVideoAtPathToSavedPhotosAlbum:url completionBlock:^(NSURL *assetURL, NSError *error){
+        if (error) {
+            NSLog(@"Video could not be saved");
+        }
+    }];
 }
 
 @end
