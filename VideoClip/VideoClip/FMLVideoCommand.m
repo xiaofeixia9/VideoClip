@@ -34,20 +34,27 @@ static id _instance;
         assetAudioTrack = [asset tracksWithMediaType:AVMediaTypeAudio][0];
     }
     
+    CMTime insertionPoint = kCMTimeZero;
     CMTime startDuration = CMTimeMakeWithSeconds(startSecond, 1);
     CMTime endDuration = CMTimeMakeWithSeconds(endSecond, 1);
     NSError *error = nil;
     
-    _mutableComposition = [AVMutableComposition composition];
+    if(!self.mutableComposition) {
+
+        _mutableComposition = [AVMutableComposition composition];
+        
+        if(assetVideoTrack != nil) {
+            AVMutableCompositionTrack *compositionVideoTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+            [compositionVideoTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetVideoTrack atTime:insertionPoint error:&error];
+        }
+        if(assetAudioTrack != nil) {
+            AVMutableCompositionTrack *compositionAudioTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+            [compositionAudioTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetAudioTrack atTime:insertionPoint error:&error];
+        }
+    } else {
+        [_mutableComposition removeTimeRange:CMTimeRangeMake(startDuration, endDuration)];
+    }
     
-    if(assetVideoTrack != nil) {
-        AVMutableCompositionTrack *compositionVideoTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-        [compositionVideoTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetVideoTrack atTime:kCMTimeZero error:&error];
-    }
-    if(assetAudioTrack != nil) {
-        AVMutableCompositionTrack *compositionAudioTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-        [compositionAudioTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetAudioTrack atTime:kCMTimeZero error:&error];
-    }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:FMLEditCommandCompletionNotification object:self];
 }
