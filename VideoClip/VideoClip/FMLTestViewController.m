@@ -23,7 +23,6 @@
 {
     [super viewDidLoad];
     
-    
     [self setUpView];
     [self setUpPlayView];
 }
@@ -34,8 +33,9 @@
     [closeBtn setTitle:@"关闭" forState:UIControlStateNormal];
     [self.view addSubview:closeBtn];
     
+    WEAKSELF
     [closeBtn bk_addEventHandler:^(id sender) {
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [weakSelf dismissViewControllerAnimated:YES completion:nil];
     } forControlEvents:UIControlEventTouchUpInside];
     [closeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(50, 50));
@@ -50,10 +50,18 @@
     AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:[self player]];
     playerLayer.frame = self.view.layer.bounds;
     [self.view.layer addSublayer:playerLayer];
+    self.playerLayer = playerLayer;
     
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:self.avAsset];
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
     [self.player play];
+}
+
+- (void)dealloc
+{
+    [self.playerLayer removeFromSuperlayer];
+    
+    [self.player pause];
 }
 
 @end

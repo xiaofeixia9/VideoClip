@@ -35,24 +35,19 @@ static id _instance;
     }
     
     CMTime insertionPoint = kCMTimeZero;
-    CMTime startDuration = CMTimeMakeWithSeconds(startSecond, 1);
-    CMTime endDuration = CMTimeMakeWithSeconds(endSecond, 1);
+    CMTime startDuration = CMTimeMake(startSecond, 1);
+    CMTime endDuration = CMTimeMake(endSecond, 1);
     NSError *error = nil;
-    
-    if(!self.mutableComposition) {
 
-        _mutableComposition = [AVMutableComposition composition];
-        
-        if(assetVideoTrack != nil) {
-            AVMutableCompositionTrack *compositionVideoTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-            [compositionVideoTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetVideoTrack atTime:insertionPoint error:&error];
-        }
-        if(assetAudioTrack != nil) {
-            AVMutableCompositionTrack *compositionAudioTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-            [compositionAudioTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetAudioTrack atTime:insertionPoint error:&error];
-        }
-    } else {
-        [_mutableComposition removeTimeRange:CMTimeRangeMake(startDuration, endDuration)];
+    _mutableComposition = [AVMutableComposition composition];
+    
+    if(assetVideoTrack != nil) {
+        AVMutableCompositionTrack *compositionVideoTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+        [compositionVideoTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetVideoTrack atTime:insertionPoint error:&error];
+    }
+    if(assetAudioTrack != nil) {
+        AVMutableCompositionTrack *compositionAudioTrack = [_mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        [compositionAudioTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetAudioTrack atTime:insertionPoint error:&error];
     }
     
     
