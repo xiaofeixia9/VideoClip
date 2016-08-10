@@ -35,18 +35,18 @@
     
     CMTime insertionPoint = kCMTimeZero;
     CMTime startDuration = CMTimeMake(startSecond, 1);
-    CMTime endDuration = CMTimeMake(endSecond, 1);
+    CMTime duration = CMTimeMake(endSecond - startSecond, 1);
     NSError *error = nil;
-
+    
     _mutableComposition = [AVMutableComposition composition];
     
     if(assetVideoTrack != nil) {
         AVMutableCompositionTrack *compositionVideoTrack = [self.mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-        [compositionVideoTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetVideoTrack atTime:insertionPoint error:&error];
+        [compositionVideoTrack insertTimeRange:CMTimeRangeMake(startDuration, duration) ofTrack:assetVideoTrack atTime:insertionPoint error:&error];
     }
     if(assetAudioTrack != nil) {
         AVMutableCompositionTrack *compositionAudioTrack = [self.mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-        [compositionAudioTrack insertTimeRange:CMTimeRangeMake(startDuration, endDuration) ofTrack:assetAudioTrack atTime:insertionPoint error:&error];
+        [compositionAudioTrack insertTimeRange:CMTimeRangeMake(startDuration, duration) ofTrack:assetAudioTrack atTime:insertionPoint error:&error];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:FMLEditCommandCompletionNotification object:self];
@@ -66,26 +66,24 @@
     
     // Step 2
     // Create an export session with the composition and write the exported movie to the photo library
-    _exportSession = [[AVAssetExportSession alloc] initWithAsset:[self.mutableComposition copy] presetName:AVAssetExportPreset1280x720];
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:[self.mutableComposition copy] presetName:AVAssetExportPreset1280x720];
     
-    self.exportSession.outputURL = [NSURL fileURLWithPath:outputURL];
-    self.exportSession.outputFileType=AVFileTypeQuickTimeMovie;
+    exportSession.outputURL = [NSURL fileURLWithPath:outputURL];
+    exportSession.outputFileType=AVFileTypeQuickTimeMovie;
     
-    [self.exportSession exportAsynchronouslyWithCompletionHandler:^(void){
-        switch (self.exportSession.status) {
+    [exportSession exportAsynchronouslyWithCompletionHandler:^(void){
+        switch (exportSession.status) {
             case AVAssetExportSessionStatusCompleted:
                 [self writeVideoToPhotoLibrary:[NSURL fileURLWithPath:outputURL]];
                 // Step 3
                 // Notify AVSEViewController about export completion
-                [[NSNotificationCenter defaultCenter]
-                 postNotificationName:FMLExportCommandCompletionNotification
-                 object:self];
+                
                 break;
             case AVAssetExportSessionStatusFailed:
-                NSLog(@"Failed:%@", self.exportSession.error);
+                NSLog(@"Failed:%@", exportSession.error);
                 break;
             case AVAssetExportSessionStatusCancelled:
-                NSLog(@"Canceled:%@", self.exportSession.error);
+                NSLog(@"Canceled:%@", exportSession.error);
                 break;
             default:
                 break;
@@ -100,6 +98,11 @@
     [library writeVideoAtPathToSavedPhotosAlbum:url completionBlock:^(NSURL *assetURL, NSError *error){
         if (error) {
             NSLog(@"Video could not be saved");
+        } else {
+            _assetURL = assetURL;
+            [[NSNotificationCenter defaultCenter]
+             postNotificationName:FMLExportCommandCompletionNotification
+             object:self];
         }
     }];
 }

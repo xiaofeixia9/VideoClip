@@ -180,7 +180,9 @@
         
         CALayer *imageLayer = [CALayer new];
         imageLayer.contents = (id) scaleImg.CGImage;
+        imageLayer.contentsGravity = kCAGravityResizeAspectFill;
         imageLayer.frame = CGRectMake(imageX, 0, imageW, imageH);
+        imageLayer.masksToBounds = YES;
         
         [weakSelf.imagesView.layer addSublayer:imageLayer];
         
@@ -203,7 +205,7 @@
 }
 
 #pragma mark - 拖拽事件
- - (void)leftDragGesture:(UIPanGestureRecognizer *)ges
+- (void)leftDragGesture:(UIPanGestureRecognizer *)ges
 {
     switch (ges.state) {
         case UIGestureRecognizerStateBegan:
@@ -212,7 +214,7 @@
             self.progressBarView.hidden = YES;
             break;
         case UIGestureRecognizerStateChanged: {
-        
+            
             CGPoint translation = [ges translationInView:self];
             
             // 判断滑块滑动的时间是否小于最小秒
@@ -301,7 +303,7 @@
 #pragma mark - 自定义事件
 - (void)setProgressPositionWithSecond:(Float64)second
 {
-    CGFloat leftX = (second / self.totalSeconds) * self.width + self.progressBarView.width;
+    CGFloat leftX = (second / self.totalSeconds) * self.width;
     
     [self.progressBarView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(leftX);

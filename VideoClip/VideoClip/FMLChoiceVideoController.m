@@ -117,7 +117,7 @@ static NSString * const ID = @"video";
 {
     ALAsset *asset = self.videosArray[indexPath.item];
     
-    FMLClipVideoViewController *videoVC = [[FMLClipVideoViewController alloc] initClipVideoVCWithAsset:asset];
+    FMLClipVideoViewController *videoVC = [[FMLClipVideoViewController alloc] initClipVideoVCWithAssetURL:asset.defaultRepresentation.url];
     
     [self presentViewController:videoVC animated:YES completion:nil];
 }

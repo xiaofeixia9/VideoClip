@@ -12,7 +12,7 @@
 @interface FMLVideoCommand : NSObject
 
 @property (nonatomic, strong, readonly) AVMutableComposition *mutableComposition;
-@property (nonatomic, strong, readonly) AVAssetExportSession *exportSession;
+@property (nonatomic, strong, readonly) NSURL *assetURL;
 
 - (instancetype)initVideoCommendWithComposition:(AVMutableComposition *)composition;
 

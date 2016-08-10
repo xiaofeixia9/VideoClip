@@ -11,6 +11,6 @@
 
 @interface FMLClipVideoViewController : UIViewController
 
-- (instancetype)initClipVideoVCWithAsset:(ALAsset *)asset;
+- (instancetype)initClipVideoVCWithAssetURL:(NSURL *)assetUrl;
 
 @end

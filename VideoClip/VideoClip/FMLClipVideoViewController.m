@@ -17,11 +17,15 @@
 
 @interface FMLClipVideoViewController ()
 
-@property (nonatomic, strong) ALAsset *sourceAsset;
+@property (nonatomic, strong) NSURL *assetUrl;
 @property (nonatomic, strong) AVAsset *avAsset;
 
 @property (nonatomic, strong) UIView *navBar;
+@property (nonatomic, strong) UIButton *backBtn;
+@property (nonatomic, strong) UIButton *nextBtn;
 @property (nonatomic, strong) UIView *playerView;
+@property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
+
 @property (nonatomic, strong) FMLClipFrameView *clipFrameView;
 @property (nonatomic, assign) Float64 startSecond;  ///< leftDragView对应的秒
 @property (nonatomic, assign) Float64 endSecond;   ///< rightDragView对应的秒
@@ -40,10 +44,10 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
 @implementation FMLClipVideoViewController
 
-- (instancetype)initClipVideoVCWithAsset:(ALAsset *)asset
+- (instancetype)initClipVideoVCWithAssetURL:(NSURL *)assetUrl;
 {
     if (self = [super init]) {
-        _sourceAsset = asset;
+        _assetUrl = assetUrl;
     }
     
     return self;
@@ -60,6 +64,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 - (void)setUpView
 {
     self.view.backgroundColor = [UIColor whiteColor];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     
     [self setUpNavBar];
     [self setUpPlayerView];
@@ -74,34 +79,28 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     self.navBar = navBar;
     [navBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.mas_equalTo(0);
-        make.height.mas_equalTo(64);
+        make.height.mas_equalTo(55);
     }];
     
-    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    
-    WEAKSELF
-    [backBtn bk_addEventHandler:^(id sender) {
-        [weakSelf dismissViewControllerAnimated:YES completion:nil];
-    } forControlEvents:UIControlEventTouchUpInside];
-    [backBtn setTitle:@"返回" forState:UIControlStateNormal];
-    [backBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [navBar addSubview:backBtn];
-    [backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(navBar.mas_centerY);
-        make.left.mas_equalTo(10);
+    [navBar addSubview:self.backBtn];
+    [self.backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(60);
+        make.height.mas_equalTo(navBar.mas_height);
+        make.left.mas_equalTo(0);
     }];
     
-    UIButton *nextBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [nextBtn setTitle:@"Next" forState:UIControlStateNormal];
-    [nextBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [nextBtn bk_addEventHandler:^(id sender) {
-       FMLVideoCommand *videoCommand = [[FMLVideoCommand alloc] init];
-        [videoCommand trimAsset:weakSelf.avAsset WithStartSecond:weakSelf.startSecond andEndSecond:weakSelf.endSecond];
-    } forControlEvents:UIControlEventTouchUpInside];
-    [navBar addSubview:nextBtn];
-    [nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+    [navBar addSubview:self.nextBtn];
+    [self.nextBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(60);
+        make.height.mas_equalTo(navBar.mas_height);
+        make.right.mas_equalTo(0);
+    }];
+    
+    [navBar addSubview:self.indicatorView];
+    [self.indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(40, 40));
         make.centerY.mas_equalTo(navBar.mas_centerY);
-        make.right.mas_equalTo(-10);
+        make.right.mas_equalTo(-35);
     }];
 }
 
@@ -130,7 +129,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 #pragma mark - 初始化数据
 - (void)setUpData
 {
-    AVAsset  *avAsset = [[AVURLAsset alloc] initWithURL:self.sourceAsset.defaultRepresentation.url options:nil];
+    AVAsset  *avAsset = [[AVURLAsset alloc] initWithURL:self.assetUrl options:nil];
     
     NSArray *assetKeysToLoadAndTest = @[@"playable", @"composable", @"tracks", @"duration"];
     
@@ -194,10 +193,11 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     self.observer = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         Float64 seconds = CMTimeGetSeconds(time);
         
+        NSLog(@"seconds - %f", seconds);
         // rate ==1.0，表示正在播放；rate == 0.0，暂停；rate == -1.0，播放失败
         if (weakSelf.player.rate > 0 && weakSelf.player.error == nil && seconds <= weakSelf.endSecond) {
             [weakSelf.clipFrameView setProgressPositionWithSecond:seconds];
-        }  else if (seconds >= weakSelf.endSecond) {
+        }  else if (seconds > weakSelf.endSecond) {
             [weakSelf playerItemDidReachEnd];
         }
     }];
@@ -229,11 +229,14 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     [clipFrameView setDidEndDragLeftView:^(Float64 second) {    // 结束左边view拖拽
         weakSelf.startSecond = second;
+        
         [weakSelf.player seekToTime:CMTimeMake(second, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
     }];
     
     [clipFrameView setDidEndDragRightView:^(Float64 second) {   // 结束右边view拖拽
         weakSelf.endSecond = second;
+        
+        [weakSelf.player seekToTime:CMTimeMake(weakSelf.startSecond , 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
     }];
 }
 
@@ -271,7 +274,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
 - (void)playerItemDidReachEnd
 {
-    [self.player seekToTime:CMTimeMake(self.startSecond, 1)completionHandler:^(BOOL finished) {
+    [self.player seekToTime:CMTimeMake(self.startSecond, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
         [self.player pause];
     }];
 }
@@ -292,10 +295,12 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 - (void)exportCommandCompletionNotificationReceiver:(NSNotification*) notification
 {
     if ([[notification name] isEqualToString:FMLExportCommandCompletionNotification]) {
-        NSURL *url = [[notification object] exportSession].outputURL;
+        NSURL *url = [[notification object] assetURL];
         dispatch_async( dispatch_get_main_queue(), ^{
+            self.nextBtn.hidden = NO;
+            [self.indicatorView stopAnimating];
             
-        });
+    });
     }
 }
 
@@ -365,6 +370,56 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     }
     
     return _imageLayer;
+}
+
+- (UIButton *)backBtn
+{
+    if (!_backBtn) {
+        UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        
+        WEAKSELF
+        [backBtn bk_addEventHandler:^(id sender) {
+            [weakSelf dismissViewControllerAnimated:YES completion:nil];
+        } forControlEvents:UIControlEventTouchUpInside];
+        [backBtn setImage:[UIImage imageNamed:@"record_ico_back"] forState:UIControlStateNormal];
+        [backBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        
+        _backBtn = backBtn;
+    }
+    
+    return _backBtn;
+}
+
+- (UIButton *)nextBtn
+{
+    if (!_nextBtn) {
+        UIButton *nextBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [nextBtn setImage:[UIImage imageNamed:@"record_ico_next"] forState:UIControlStateNormal];
+        [nextBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        
+        WEAKSELF
+        [nextBtn bk_addEventHandler:^(id sender) {
+            weakSelf.nextBtn.hidden = YES;
+            [weakSelf.indicatorView startAnimating];
+            
+            FMLVideoCommand *videoCommand = [[FMLVideoCommand alloc] init];
+            [videoCommand trimAsset:weakSelf.avAsset WithStartSecond:weakSelf.startSecond andEndSecond:weakSelf.endSecond];
+        } forControlEvents:UIControlEventTouchUpInside];
+        
+        _nextBtn = nextBtn;
+    }
+    
+    return _nextBtn;
+}
+
+- (UIActivityIndicatorView *)indicatorView
+{
+    if (!_indicatorView) {
+        _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        _indicatorView.hidesWhenStopped = YES;
+    }
+    
+    return _indicatorView;
 }
 
 @end
