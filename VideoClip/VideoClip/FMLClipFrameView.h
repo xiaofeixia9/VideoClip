@@ -20,11 +20,8 @@
 
 - (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(Float64)seconds;
 
-/**
- *  根据秒数计算出进度条位置
- *
- *  @param second 秒数
- */
-- (void)setProgressPositionWithSecond:(Float64)second;
+- (void)startProgressBarMove; ///< 开始进度条移动
+- (void)stopProgressBarMove; ///< 结束进度条移动
+- (void)resetProgressBarMode; ///< 重置进度条状态
 
 @end

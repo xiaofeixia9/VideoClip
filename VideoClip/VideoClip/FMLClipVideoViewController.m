@@ -193,12 +193,13 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     self.observer = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         Float64 seconds = CMTimeGetSeconds(time);
         
-        NSLog(@"seconds - %f", seconds);
         // rate ==1.0，表示正在播放；rate == 0.0，暂停；rate == -1.0，播放失败
-        if (weakSelf.player.rate > 0 && weakSelf.player.error == nil && seconds <= weakSelf.endSecond) {
-            [weakSelf.clipFrameView setProgressPositionWithSecond:seconds];
-        }  else if (seconds > weakSelf.endSecond) {
+        if (weakSelf.player.rate > 0 && weakSelf.player.error == nil && seconds < floor(weakSelf.endSecond)) {
+            [weakSelf.clipFrameView startProgressBarMove];
+        }  else if (seconds >= floor(weakSelf.endSecond)) {
             [weakSelf playerItemDidReachEnd];
+        } else if (weakSelf.player.rate ==0) {
+            [weakSelf.clipFrameView stopProgressBarMove];
         }
     }];
     
@@ -274,6 +275,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 
 - (void)playerItemDidReachEnd
 {
+    [self.clipFrameView resetProgressBarMode];
     [self.player seekToTime:CMTimeMake(self.startSecond, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
         [self.player pause];
     }];
@@ -300,7 +302,8 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
             self.nextBtn.hidden = NO;
             [self.indicatorView stopAnimating];
             
-    });
+            
+        });
     }
 }
 

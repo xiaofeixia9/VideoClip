@@ -24,6 +24,9 @@
 @property (nonatomic, strong) AVAsset *asset;
 @property (nonatomic, assign) Float64 minSeconds;  ///< 最少多少秒
 
+@property (nonatomic, strong) NSTimer *progressTimer;
+@property (nonatomic, assign) Float64 diffTime;
+
 @property (nonatomic, weak) UILabel *startTimeLabel;  ///< 开始秒数
 @property (nonatomic, weak) UILabel *endTimeLabel;   ///< 结束秒数
 @property (nonatomic, weak) UILabel *clipSecondLabel; ///< 一共截多少秒
@@ -211,14 +214,14 @@
         case UIGestureRecognizerStateBegan:
             !self.didStartDragView ? : self.didStartDragView();
             
-            self.progressBarView.hidden = YES;
+            [self resetProgressBarMode];
             break;
         case UIGestureRecognizerStateChanged: {
             
             CGPoint translation = [ges translationInView:self];
             
             // 判断滑块滑动的时间是否小于最小秒
-            Float64 diffSeconds = (CGRectGetMaxX(self.rightDragView.frame) - ges.view.x) / self.width * self.totalSeconds;
+            Float64 diffSeconds = (CGRectGetMaxX(self.rightDragView.frame) - self.leftDragView.x) / self.width * self.totalSeconds;
             self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
             
             if (diffSeconds <= self.minSeconds && translation.x > 0) {
@@ -258,12 +261,12 @@
         case UIGestureRecognizerStateBegan:
             !self.didStartDragView ? : self.didStartDragView();
             
-            self.progressBarView.hidden = YES;
+            [self resetProgressBarMode];
             break;
         case UIGestureRecognizerStateChanged: {
             CGPoint translation = [ges translationInView:self];
             
-            Float64 diffSeconds = (CGRectGetMaxX(ges.view.frame) - self.leftDragView.x) / self.width * self.totalSeconds;
+            Float64 diffSeconds = (CGRectGetMaxX(self.rightDragView.frame) - self.leftDragView.x) / self.width * self.totalSeconds;
             self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
             
             if (diffSeconds <= self.minSeconds && translation.x < 0) {
@@ -300,16 +303,49 @@
     }
 }
 
-#pragma mark - 自定义事件
-- (void)setProgressPositionWithSecond:(Float64)second
+#pragma mark - 进度条移动动画
+- (void)startProgressBarMove
 {
-    CGFloat leftX = (second / self.totalSeconds) * self.width;
+    if (self.diffTime == 0) {
+        [self.progressTimer fire];
+    }
+}
+
+- (void)stopProgressBarMove
+{
+    [self.progressTimer invalidate];
+    self.progressTimer = nil;
+}
+
+/** 重置进度条状态 */
+- (void)resetProgressBarMode
+{
+    self.diffTime = 0;
+    [self.progressTimer invalidate];
+    self.progressTimer = nil;
     
-    [self.progressBarView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(leftX);
-    }];
+    self.progressBarView.hidden = YES;
+}
+
+- (void)setProgressBarViewPosition
+{
+    self.diffTime += 1 / self.asset.fml_getFPS;
     
+    CGFloat distance = self.width / self.totalSeconds * self.diffTime + self.leftDragView.x;
+    NSLog(@"distance_%f, diffTime - %f", distance, self.diffTime);
+    
+    self.progressBarView.x = distance;
     self.progressBarView.hidden = NO;
+}
+
+- (NSTimer *)progressTimer
+{
+    if (!_progressTimer) {
+        _progressTimer = [NSTimer timerWithTimeInterval:1 / self.asset.fml_getFPS target:self selector:@selector(setProgressBarViewPosition) userInfo:nil repeats:YES];
+        [[NSRunLoop mainRunLoop]addTimer:_progressTimer forMode:NSDefaultRunLoopMode];
+    }
+    
+    return _progressTimer;
 }
 
 @end
