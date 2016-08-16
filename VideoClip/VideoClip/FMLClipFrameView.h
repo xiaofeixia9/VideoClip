@@ -20,8 +20,7 @@
 
 - (instancetype)initWithAsset:(AVAsset *)asset minSeconds:(Float64)seconds;
 
-- (void)startProgressBarMove; ///< 开始进度条移动
-- (void)stopProgressBarMove; ///< 结束进度条移动
-- (void)resetProgressBarMode; ///< 重置进度条状态
+- (void)resetProgressBarMode;
+- (void)setProgressBarPoisionWithSecond:(Float64)second;
 
 @end

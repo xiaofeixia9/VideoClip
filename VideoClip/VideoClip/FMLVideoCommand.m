@@ -8,6 +8,7 @@
 
 #import "FMLVideoCommand.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "AVAsset+FMLVideo.h"
 
 @implementation FMLVideoCommand
 
@@ -34,8 +35,8 @@
     }
     
     CMTime insertionPoint = kCMTimeZero;
-    CMTime startDuration = CMTimeMake(startSecond, 1);
-    CMTime duration = CMTimeMake(endSecond - startSecond, 1);
+    CMTime startDuration = CMTimeMakeWithSeconds(startSecond, asset.fml_getFPS);
+    CMTime duration = CMTimeMakeWithSeconds(endSecond - startSecond, asset.fml_getFPS);
     NSError *error = nil;
     
     _mutableComposition = [AVMutableComposition composition];
@@ -76,7 +77,6 @@
             case AVAssetExportSessionStatusCompleted:
                 [self writeVideoToPhotoLibrary:[NSURL fileURLWithPath:outputURL]];
                 // Step 3
-                // Notify AVSEViewController about export completion
                 
                 break;
             case AVAssetExportSessionStatusFailed:
@@ -100,9 +100,9 @@
             NSLog(@"Video could not be saved");
         } else {
             _assetURL = assetURL;
-            [[NSNotificationCenter defaultCenter]
-             postNotificationName:FMLExportCommandCompletionNotification
-             object:self];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:FMLExportCommandCompletionNotification
+                                                                object:self];
         }
     }];
 }

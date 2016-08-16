@@ -24,8 +24,8 @@
 @property (nonatomic, strong) AVAsset *asset;
 @property (nonatomic, assign) Float64 minSeconds;  ///< 最少多少秒
 
-@property (nonatomic, strong) NSTimer *progressTimer;
-@property (nonatomic, assign) Float64 diffTime;
+//@property (nonatomic, strong) NSTimer *progressTimer;
+@property (nonatomic, assign) Float64 diffSpace;
 
 @property (nonatomic, weak) UILabel *startTimeLabel;  ///< 开始秒数
 @property (nonatomic, weak) UILabel *endTimeLabel;   ///< 结束秒数
@@ -202,8 +202,8 @@
 - (NSString *)secondsToStr:(Float64)seconds
 {
     NSInteger secondI = (NSInteger) seconds;
-    NSInteger second = ceil(secondI % 60);
-    NSInteger minute = ceil((secondI / 60) % secondI);
+    NSInteger second = floor(secondI % 60);
+    NSInteger minute = floor((secondI / 60) % secondI);
     return [NSString stringWithFormat:@"%02ld:%02ld", minute, second];
 }
 
@@ -303,49 +303,18 @@
     }
 }
 
-#pragma mark - 进度条移动动画
-- (void)startProgressBarMove
-{
-    if (self.diffTime == 0) {
-        [self.progressTimer fire];
-    }
-}
-
-- (void)stopProgressBarMove
-{
-    [self.progressTimer invalidate];
-    self.progressTimer = nil;
-}
-
-/** 重置进度条状态 */
 - (void)resetProgressBarMode
 {
-    self.diffTime = 0;
-    [self.progressTimer invalidate];
-    self.progressTimer = nil;
-    
     self.progressBarView.hidden = YES;
 }
 
-- (void)setProgressBarViewPosition
+#pragma mark - 进度条移动动画
+- (void)setProgressBarPoisionWithSecond:(Float64)second
 {
-    self.diffTime += 1 / self.asset.fml_getFPS;
+    CGFloat position = self.width / self.totalSeconds * second;
+    self.progressBarView.x = position;
     
-    CGFloat distance = self.width / self.totalSeconds * self.diffTime + self.leftDragView.x;
-    NSLog(@"distance_%f, diffTime - %f", distance, self.diffTime);
-    
-    self.progressBarView.x = distance;
     self.progressBarView.hidden = NO;
-}
-
-- (NSTimer *)progressTimer
-{
-    if (!_progressTimer) {
-        _progressTimer = [NSTimer timerWithTimeInterval:1 / self.asset.fml_getFPS target:self selector:@selector(setProgressBarViewPosition) userInfo:nil repeats:YES];
-        [[NSRunLoop mainRunLoop]addTimer:_progressTimer forMode:NSDefaultRunLoopMode];
-    }
-    
-    return _progressTimer;
 }
 
 @end

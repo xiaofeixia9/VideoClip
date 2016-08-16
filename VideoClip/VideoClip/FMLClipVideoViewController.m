@@ -33,7 +33,7 @@
 @property (nonatomic, strong) id observer;
 @property (nonatomic, strong) AVPlayer *player;                     ///< 播放器
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;    ///< 播放的layer
-@property (nonatomic, strong) CALayer *imageLayer;              ///< 显示图片的layer
+//@property (nonatomic, strong) CALayer *imageLayer;              ///< 显示图片的layer
 
 @property (nonatomic, strong) AVMutableComposition *composition;
 
@@ -121,7 +121,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
             [weakSelf.player pause];
         } else {
             [weakSelf.player play];
-            weakSelf.imageLayer.hidden = YES;
+            //            weakSelf.imageLayer.hidden = YES;
         }
     }];
 }
@@ -177,11 +177,16 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     if ([asset tracksWithMediaType:AVMediaTypeVideo].count != 0) {
         [self.playerView.layer addSublayer:self.playerLayer];
         
-        [self.playerView.layer insertSublayer:self.imageLayer above:self.playerLayer];
+        //        [self.playerView.layer insertSublayer:self.imageLayer above:self.playerLayer];
         [self addObserver:self forKeyPath:@"playerLayer.readyForDisplay" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:HJClipVideoLayerReadyForDisplay];
     } else {
     }
     
+    [self setUpAVAsset:asset];
+}
+
+- (void)setUpAVAsset:(AVAsset *)asset
+{
     // 创建一个AVPlayerItem资源 并将AVPlayer替换成创建的资源
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
@@ -190,16 +195,14 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     // 监听时间
     WEAKSELF
-    self.observer = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    self.observer = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, self.avAsset.fml_getFPS) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         Float64 seconds = CMTimeGetSeconds(time);
+        NSLog(@"second - %f", seconds);
         
-        // rate ==1.0，表示正在播放；rate == 0.0，暂停；rate == -1.0，播放失败
-        if (weakSelf.player.rate > 0 && weakSelf.player.error == nil && seconds < floor(weakSelf.endSecond)) {
-            [weakSelf.clipFrameView startProgressBarMove];
-        }  else if (seconds >= floor(weakSelf.endSecond)) {
+        if (seconds >= weakSelf.endSecond) {
             [weakSelf playerItemDidReachEnd];
-        } else if (weakSelf.player.rate ==0) {
-            [weakSelf.clipFrameView stopProgressBarMove];
+        }else if (weakSelf.player.rate > 0) {
+            [weakSelf.clipFrameView setProgressBarPoisionWithSecond:seconds];
         }
     }];
     
@@ -231,13 +234,13 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     [clipFrameView setDidEndDragLeftView:^(Float64 second) {    // 结束左边view拖拽
         weakSelf.startSecond = second;
         
-        [weakSelf.player seekToTime:CMTimeMake(second, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+        [weakSelf.player seekToTime:CMTimeMakeWithSeconds(second, weakSelf.avAsset.fml_getFPS) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
     }];
     
     [clipFrameView setDidEndDragRightView:^(Float64 second) {   // 结束右边view拖拽
         weakSelf.endSecond = second;
         
-        [weakSelf.player seekToTime:CMTimeMake(weakSelf.startSecond , 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+        [weakSelf.player seekToTime:CMTimeMakeWithSeconds(weakSelf.startSecond, weakSelf.avAsset.fml_getFPS) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
     }];
 }
 
@@ -261,22 +264,24 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 /** 拖拽了几秒 */
 - (void)didDragSecond:(Float64)second
 {
-    WEAKSELF
-    [self.avAsset fml_getThumbailImageRequestAtTimeSecond:second imageBackBlock:^(UIImage *image) {    // 获取每一秒对应的图片
-        CGRect clipRect = weakSelf.playerLayer.videoRect;
-        CGRect orginalRect = weakSelf.playerView.frame;
-        
-        [image fml_imageOrginalRect:orginalRect clipRect:clipRect completeBlock:^(UIImage *clipImage) {
-            weakSelf.imageLayer.hidden = NO;
-            weakSelf.imageLayer.contents = (id) clipImage.CGImage;
-        }];
-    }];
+    //    WEAKSELF
+    //    [self.avAsset fml_getThumbailImageRequestAtTimeSecond:second imageBackBlock:^(UIImage *image) {    // 获取每一秒对应的图片
+    //        CGRect clipRect = weakSelf.playerLayer.videoRect;
+    //        CGRect orginalRect = weakSelf.playerView.frame;
+    //
+    //        [image fml_imageOrginalRect:orginalRect clipRect:clipRect completeBlock:^(UIImage *clipImage) {
+    //            weakSelf.imageLayer.hidden = NO;
+    //            weakSelf.imageLayer.contents = (id) clipImage.CGImage;
+    //        }];
+    //    }];
+    [self.player seekToTime:CMTimeMakeWithSeconds(second, self.avAsset.fml_getFPS) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
 }
 
 - (void)playerItemDidReachEnd
 {
-    [self.clipFrameView resetProgressBarMode];
-    [self.player seekToTime:CMTimeMake(self.startSecond, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+    //    [self.clipFrameView resetProgressBarMode];
+    
+    [self.player seekToTime:CMTimeMakeWithSeconds(self.startSecond, self.avAsset.fml_getFPS) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
         [self.player pause];
     }];
 }
@@ -301,7 +306,6 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         dispatch_async( dispatch_get_main_queue(), ^{
             self.nextBtn.hidden = NO;
             [self.indicatorView stopAnimating];
-            
             
         });
     }
@@ -364,16 +368,16 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     return _playerLayer;
 }
 
-- (CALayer *)imageLayer
-{
-    if (!_imageLayer) {
-        _imageLayer = [CALayer new];
-        _imageLayer.frame = self.playerView.layer.bounds;
-        _imageLayer.hidden = YES;
-    }
-    
-    return _imageLayer;
-}
+//- (CALayer *)imageLayer
+//{
+//    if (!_imageLayer) {
+//        _imageLayer = [CALayer new];
+//        _imageLayer.frame = self.playerView.layer.bounds;
+//        _imageLayer.hidden = YES;
+//    }
+//
+//    return _imageLayer;
+//}
 
 - (UIButton *)backBtn
 {
