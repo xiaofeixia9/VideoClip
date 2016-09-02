@@ -26,8 +26,6 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
 @property (nonatomic, assign) Float64 totalSeconds;         ///< 总秒数
 @property (nonatomic, strong) AVAsset *asset;
 
-@property (nonatomic, assign) Float64 minSeconds;  ///< 最少多少秒
-
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSMutableArray *collectionImages;
 
@@ -175,7 +173,6 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
     }
 
     __weak typeof(self) weakSelf = self;
-    
     [self.asset fml_getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
         if (image) {
             UIImage *scaledImg = [UIImage fml_scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到最大20k进行显示
@@ -208,38 +205,13 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
             break;
         case UIGestureRecognizerStateChanged: {
             
+            // 1.控制最小间距
             CGPoint translation = [ges translationInView:self];
             
-            // 判断滑块滑动的时间是否小于最小秒
-            Float64 diffSeconds = (CGRectGetMaxX(self.rightDragView.frame) - self.leftDragView.x) / self.width * self.totalSeconds;
-            self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
-            
-            if (diffSeconds <= self.minSeconds && translation.x > 0) {
-                return;
-            }
-            
-            CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
-            CGFloat rightMaxX = CGRectGetMaxX(self.rightDragView.frame);
-            CGFloat leftViewShouldX = rightMaxX - shouldDiffDis;
-            
-            if (ges.view.x + translation.x >= 0 && ges.view.x + translation.x < leftViewShouldX) {
-                [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-                    make.left.mas_equalTo(ges.view.x + translation.x);
-                }];
-            }
             
             [ges setTranslation:CGPointZero inView:self];
-            
-            // 显示目前滑到的时间
-            Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
-            self.startTimeLabel.text = [self secondsToStr:leftSecond];
-            
-            !self.didDragView ? : self.didDragView(leftSecond);
         } break;
         case UIGestureRecognizerStateEnded: {
-            Float64 leftSecond = ges.view.x /  self.width * self.totalSeconds;
-            !self.didEndDragLeftView ? : self.didEndDragLeftView(leftSecond);
-            self.startTimeLabel.text = [self secondsToStr:leftSecond];
         } break;
         default:
             break;
@@ -257,33 +229,7 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
         case UIGestureRecognizerStateChanged: {
             CGPoint translation = [ges translationInView:self];
             
-            Float64 diffSeconds = (CGRectGetMaxX(self.rightDragView.frame) - self.leftDragView.x) / self.width * self.totalSeconds;
-            self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", diffSeconds];
-            if (diffSeconds <= self.minSeconds && translation.x < 0) {
-                return;
-            }
-            
-            //  计算关于两个拖拽view最小的间距
-            CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
-            CGFloat leftMaxX = self.leftDragView.x;
-            CGFloat leftViewShouldX = leftMaxX + shouldDiffDis;
-            
-            CGFloat resultX = CGRectGetMaxX(ges.view.frame)+ translation.x;
-            CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
-            
-            if (resultX <= self.width && resultX >leftViewShouldX) {
-                [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-                    make.right.mas_equalTo(-distance);
-                }];
-            }
-            
             [ges setTranslation:CGPointZero inView:self];
-            
-            // 显示目前滑到的时间
-            Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
-            self.endTimeLabel.text = [self secondsToStr:rightSecond];
-            
-            !self.didDragView ? : self.didDragView(rightSecond);
         } break;
         case UIGestureRecognizerStateEnded: {
             Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
