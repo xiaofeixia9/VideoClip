@@ -162,44 +162,28 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
 
 - (void)initData
 {
-//    __block NSUInteger i = 0;
-//    CGFloat imageW = [UIScreen mainScreen].bounds.size.width / FMLImageCount;
-//    CGFloat imageH = FMLImagesViewH;
-//    
-//    __weak typeof(self) weakSelf = self;
-//    
-//    [self.asset fml_getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
-//        
-//        if (image) {
-//            UIImage *scaleImg = [UIImage fml_scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到最大20k进行显示
-//            CGFloat imageX = i * imageW;
-//            
-//            CALayer *imageLayer = [CALayer new];
-//            imageLayer.contents = (id) scaleImg.CGImage;
-//            imageLayer.contentsGravity = kCAGravityResizeAspectFill;
-//            imageLayer.frame = CGRectMake(imageX, 0, imageW, imageH);
-//            imageLayer.masksToBounds = YES;
-//            
-//            [weakSelf.imagesView.layer addSublayer:imageLayer];
-//            
-//            i++;
-//        }
-//    }];
-    
     // 现实秒数
     self.totalSeconds = [self.asset fml_getSeconds];
     self.endTimeLabel.text = [self secondsToStr:self.totalSeconds];
     self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", self.totalSeconds];
     
-    NSUInteger imageCount = self.totalSeconds * FMLMinImageCount / FMLRecordViewSDKMaxTime;
+    NSUInteger imageCount = 0;
+    if (self.totalSeconds <= FMLRecordViewSDKMaxTime) {
+        imageCount = FMLMinImageCount;
+    } else {
+        imageCount = self.totalSeconds * FMLMinImageCount / FMLRecordViewSDKMaxTime;
+    }
+
     __weak typeof(self) weakSelf = self;
     
     [self.asset fml_getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
         if (image) {
             UIImage *scaledImg = [UIImage fml_scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到最大20k进行显示
             
-            [weakSelf.collectionImages addObject:scaledImg];
-            [weakSelf.collectionView reloadData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.collectionImages addObject:scaledImg];
+                [weakSelf.collectionView reloadData];
+            });
         }
     }];
 }
@@ -403,6 +387,7 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
         _collectionView = [[UICollectionView alloc] initWithFrame:collectionRect collectionViewLayout:layout];
         _collectionView.dataSource = self;
         [_collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([FMLScaledImageViewCell class]) bundle:nil] forCellWithReuseIdentifier:FMLScaledImageId];
+        _collectionView.showsHorizontalScrollIndicator = NO;
     }
     
     return _collectionView;

@@ -52,9 +52,7 @@ static void *cFrameRate = &cFrameRate;
             case AVAssetImageGeneratorSucceeded: {
                 UIImage *displayImage = [UIImage imageWithCGImage:image];
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    !imageBackBlock ? : imageBackBlock(displayImage);
-                });
+                !imageBackBlock ? : imageBackBlock(displayImage);
             }
                 break;
         }
