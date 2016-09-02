@@ -208,7 +208,6 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
             // 1.控制最小间距
             CGPoint translation = [ges translationInView:self];
             
-            
             [ges setTranslation:CGPointZero inView:self];
         } break;
         case UIGestureRecognizerStateEnded: {
