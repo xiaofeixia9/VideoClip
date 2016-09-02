@@ -44,6 +44,7 @@
     if(assetVideoTrack != nil) {
         AVMutableCompositionTrack *compositionVideoTrack = [self.mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
         [compositionVideoTrack insertTimeRange:CMTimeRangeMake(startDuration, duration) ofTrack:assetVideoTrack atTime:insertionPoint error:&error];
+        compositionVideoTrack.preferredTransform = assetVideoTrack.preferredTransform;
     }
     if(assetAudioTrack != nil) {
         AVMutableCompositionTrack *compositionAudioTrack = [self.mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
@@ -67,17 +68,20 @@
     
     // Step 2
     // Create an export session with the composition and write the exported movie to the photo library
-    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:[self.mutableComposition copy] presetName:AVAssetExportPreset1280x720];
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:[self.mutableComposition copy] presetName:AVAssetExportPreset640x480];
     
     exportSession.outputURL = [NSURL fileURLWithPath:outputURL];
-    exportSession.outputFileType=AVFileTypeQuickTimeMovie;
+    exportSession.outputFileType=AVFileTypeMPEG4;
     
     [exportSession exportAsynchronouslyWithCompletionHandler:^(void){
         switch (exportSession.status) {
             case AVAssetExportSessionStatusCompleted:
-                [self writeVideoToPhotoLibrary:[NSURL fileURLWithPath:outputURL]];
+                //                [self writeVideoToPhotoLibrary:[NSURL fileURLWithPath:outputURL]];
                 // Step 3
+                _assetURL = exportSession.outputURL;
                 
+                [[NSNotificationCenter defaultCenter] postNotificationName:FMLExportCommandCompletionNotification
+                                                                    object:self];
                 break;
             case AVAssetExportSessionStatusFailed:
                 NSLog(@"Failed:%@", exportSession.error);
@@ -87,22 +91,6 @@
                 break;
             default:
                 break;
-        }
-    }];
-}
-
-- (void)writeVideoToPhotoLibrary:(NSURL *)url
-{
-    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-    
-    [library writeVideoAtPathToSavedPhotosAlbum:url completionBlock:^(NSURL *assetURL, NSError *error){
-        if (error) {
-            NSLog(@"Video could not be saved");
-        } else {
-            _assetURL = assetURL;
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:FMLExportCommandCompletionNotification
-                                                                object:self];
         }
     }];
 }

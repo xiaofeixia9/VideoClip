@@ -12,30 +12,34 @@
 
 - (void)fml_imageOrginalRect:(CGRect)orginalRect clipRect:(CGRect)clipRect completeBlock:(void (^)(UIImage *))imageBackBlock
 {
-        CGSize orginalSize = orginalRect.size;
-        UIGraphicsBeginImageContextWithOptions(orginalSize, NO, [UIScreen mainScreen].scale);
-        
-        UIBezierPath *path = [UIBezierPath bezierPathWithRect:clipRect];
-        [path addClip];
-        
-        [self drawInRect:clipRect];
-        
-        UIImage *resultImg = UIGraphicsGetImageFromCurrentImageContext();
-        
-        UIGraphicsEndImageContext();
+    CGSize orginalSize = orginalRect.size;
+    UIGraphicsBeginImageContextWithOptions(orginalSize, NO, [UIScreen mainScreen].scale);
     
-        !imageBackBlock ? : imageBackBlock(resultImg);
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:clipRect];
+    [path addClip];
+    
+    [self drawInRect:clipRect];
+    
+    UIImage *resultImg = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    !imageBackBlock ? : imageBackBlock(resultImg);
 }
 
 + (UIImage *)fml_scaleImage:(UIImage *)image maxDataSize:(NSUInteger)dataSize
 {
-    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-    if (imageData.length > dataSize) {
-        float scaleSize = (dataSize/1.0)/(imageData.length);
-        scaleSize = 0.9 * sqrtf(scaleSize);
-        return [self scaleImage:image toScale:scaleSize maxDataSize:dataSize];
+    if (image) {
+        NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+        if (imageData.length > dataSize) {
+            float scaleSize = (dataSize/1.0)/(imageData.length);
+            scaleSize = 0.9 * sqrtf(scaleSize);
+            return [self scaleImage:image toScale:scaleSize maxDataSize:dataSize];
+        } else {
+            return image;
+        }
     } else {
-        return image;
+        return nil;
     }
 }
 

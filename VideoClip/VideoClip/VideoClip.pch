@@ -17,4 +17,9 @@
 #define FMLEditCommandCompletionNotification @"FMLEditCommandCompletionNotification"
 #define FMLExportCommandCompletionNotification @"FMLExportCommandCompletionNotification"
 
+#define FMLRecordViewSDKMinTime 8   ///< 最小时间限制
+#define FMLRecordViewSDKMaxTime 180 ///< 最长时间限制
+#define kScreenWidth [UIScreen mainScreen].bounds.size.width
+#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+
 #endif /* VideoClip_pch */

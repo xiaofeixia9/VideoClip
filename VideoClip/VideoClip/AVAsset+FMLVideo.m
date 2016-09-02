@@ -83,7 +83,7 @@ static void *cFrameRate = &cFrameRate;
         AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self];
         imageGenerator.appliesPreferredTrackTransform = YES;
         imageGenerator.apertureMode =AVAssetImageGeneratorApertureModeEncodedPixels;
-
+        
         self.imgGenerator = imageGenerator;
     }
     
