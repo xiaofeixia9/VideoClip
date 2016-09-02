@@ -12,27 +12,30 @@
 #import "AVAsset+FMLVideo.h"
 #import <BlocksKit+UIKit.h>
 #import "UIImage+FMLClipRect.h"
+#import "FMLScaledImageViewCell.h"
 
 #define FMLLineW 4                // 线宽
+#define FMLMinImageCount 8     // 显示的图片个数
+
 #define FMLImagesViewH 42  // 预览图高度
+#define FMLImagesVIewW (kScreenWidth / FMLMinImageCount) // 图片宽度
 
-#define FMLImageCount 8     // 显示的图片个数
-
-@interface FMLClipFrameView ()
+static NSString * const FMLScaledImageId = @"FMLScaledImageId";
+@interface FMLClipFrameView () <UICollectionViewDataSource>
 
 @property (nonatomic, assign) Float64 totalSeconds;         ///< 总秒数
 @property (nonatomic, strong) AVAsset *asset;
 
 @property (nonatomic, assign) Float64 minSeconds;  ///< 最少多少秒
 
-//@property (nonatomic, strong) NSTimer *progressTimer;
-@property (nonatomic, assign) Float64 diffSpace;
+@property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic, strong) NSMutableArray *collectionImages;
 
 @property (nonatomic, strong) UILabel *startTimeLabel;  ///< 开始秒数
 @property (nonatomic, strong) UILabel *endTimeLabel;   ///< 结束秒数
 @property (nonatomic, strong) UILabel *clipSecondLabel; ///< 一共截多少秒
 
-@property (nonatomic, strong) UIView *imagesView;   ///< 显示帧图片列表
+//@property (nonatomic, strong) UIView *imagesView;   ///< 显示帧图片列表
 
 @property (nonatomic, strong) UIView *leftDragView;     ///< 左边时间拖拽view
 @property (nonatomic, strong) UIView *rightDragView;  ///< 右边时间拖拽view
@@ -77,11 +80,8 @@
         make.centerX.mas_equalTo(self);
     }];
     
-    UIView *imagesView = [UIView new];
-    imagesView.backgroundColor = [UIColor whiteColor];
-    [self addSubview:imagesView];
-    self.imagesView = imagesView;
-    [imagesView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self addSubview:self.collectionView];
+    [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.startTimeLabel.mas_bottom).offset(18);
         make.height.mas_equalTo(FMLImagesViewH);
         make.left.mas_equalTo(0);
@@ -103,7 +103,7 @@
     [leftDragView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(28, 83));
         make.left.mas_equalTo(0);
-        make.top.mas_equalTo(self.imagesView).offset(-10);
+        make.top.mas_equalTo(self.collectionView).offset(-10);
     }];
     
     UIView *rightDragView = [UIView new];
@@ -114,18 +114,18 @@
     [rightDragView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(28, 83));
         make.right.mas_equalTo(0);
-        make.top.mas_equalTo(self.imagesView).offset(-10);
+        make.top.mas_equalTo(self.collectionView).offset(-10);
     }];
     
     // 添加一个底层蓝色背景的view
     UIView *imagesBackView = [UIView new];
     imagesBackView.backgroundColor = SMSColor(252, 221, 0);
-    [self insertSubview:imagesBackView belowSubview:self.imagesView];
+    [self insertSubview:imagesBackView belowSubview:self.collectionView];
     [imagesBackView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(leftDragView.mas_left).offset(FMLLineW);
         make.right.mas_equalTo(rightDragView.mas_right).offset(-FMLLineW);
-        make.top.mas_equalTo(self.imagesView.mas_top).offset(-FMLLineW);
-        make.bottom.mas_equalTo(self.imagesView.mas_bottom).offset(FMLLineW);
+        make.top.mas_equalTo(self.collectionView.mas_top).offset(-FMLLineW);
+        make.bottom.mas_equalTo(self.collectionView.mas_bottom).offset(FMLLineW);
     }];
     
     // 添加左右侧阴影view
@@ -156,52 +156,52 @@
         make.width.mas_equalTo(5);
         make.height.mas_equalTo(FMLImagesViewH);
         make.left.mas_equalTo(0);
-        make.top.mas_equalTo(self.imagesView);
+        make.top.mas_equalTo(self.collectionView);
     }];
 }
 
 - (void)initData
 {
-    __block NSUInteger i = 0;
-    CGFloat imageW = [UIScreen mainScreen].bounds.size.width / FMLImageCount;
-    CGFloat imageH = FMLImagesViewH;
-    
-    __weak typeof(self) weakSelf = self;
-    
-    [self.asset fml_getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
-        
-        if (image) {
-            UIImage *scaleImg = [UIImage fml_scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到最大20k进行显示
-            CGFloat imageX = i * imageW;
-            
-            CALayer *imageLayer = [CALayer new];
-            imageLayer.contents = (id) scaleImg.CGImage;
-            imageLayer.contentsGravity = kCAGravityResizeAspectFill;
-            imageLayer.frame = CGRectMake(imageX, 0, imageW, imageH);
-            imageLayer.masksToBounds = YES;
-            
-            [weakSelf.imagesView.layer addSublayer:imageLayer];
-            
-            i++;
-        }
-    }];
+//    __block NSUInteger i = 0;
+//    CGFloat imageW = [UIScreen mainScreen].bounds.size.width / FMLImageCount;
+//    CGFloat imageH = FMLImagesViewH;
+//    
+//    __weak typeof(self) weakSelf = self;
+//    
+//    [self.asset fml_getImagesCount:FMLImageCount imageBackBlock:^(UIImage *image) {
+//        
+//        if (image) {
+//            UIImage *scaleImg = [UIImage fml_scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到最大20k进行显示
+//            CGFloat imageX = i * imageW;
+//            
+//            CALayer *imageLayer = [CALayer new];
+//            imageLayer.contents = (id) scaleImg.CGImage;
+//            imageLayer.contentsGravity = kCAGravityResizeAspectFill;
+//            imageLayer.frame = CGRectMake(imageX, 0, imageW, imageH);
+//            imageLayer.masksToBounds = YES;
+//            
+//            [weakSelf.imagesView.layer addSublayer:imageLayer];
+//            
+//            i++;
+//        }
+//    }];
     
     // 现实秒数
     self.totalSeconds = [self.asset fml_getSeconds];
     self.endTimeLabel.text = [self secondsToStr:self.totalSeconds];
     self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", self.totalSeconds];
     
-    if (self.totalSeconds > FMLRecordViewSDKMaxTime) {
-        
-        CGFloat rightX = kScreenWidth * (1 - FMLRecordViewSDKMaxTime / self.totalSeconds);
-        [self.rightDragView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.right.mas_equalTo(-rightX);
-        }];
-        
-        Float64 rightSecond = self.totalSeconds - FMLRecordViewSDKMaxTime;
-        self.endTimeLabel.text = [self secondsToStr:rightSecond];
-        self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", FMLRecordViewSDKMaxTime];
-    }
+    NSUInteger imageCount = self.totalSeconds * FMLMinImageCount / FMLRecordViewSDKMaxTime;
+    __weak typeof(self) weakSelf = self;
+    
+    [self.asset fml_getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
+        if (image) {
+            UIImage *scaledImg = [UIImage fml_scaleImage:image maxDataSize:1024 * 20]; // 将图片压缩到最大20k进行显示
+            
+            [weakSelf.collectionImages addObject:scaledImg];
+            [weakSelf.collectionView reloadData];
+        }
+    }];
 }
 
 /** 将秒转为字符串 */
@@ -234,27 +234,14 @@
                 return;
             }
             
-            if (diffSeconds > FMLRecordViewSDKMaxTime  && translation.x < 0) {
-                diffSeconds = FMLRecordViewSDKMaxTime;
-                
-                self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", FMLRecordViewSDKMaxTime];
-                CGFloat leftX = CGRectGetMaxX(self.rightDragView.frame) - diffSeconds / self.totalSeconds * self.width;
-                [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-                    make.left.mas_equalTo(leftX);
-                }];
-                return;
-            }
-            
             CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
             CGFloat rightMaxX = CGRectGetMaxX(self.rightDragView.frame);
             CGFloat leftViewShouldX = rightMaxX - shouldDiffDis;
             
-            CGFloat maxLeft = self.rightDragView.frame.origin.x + self.rightDragView.frame.size.width - FMLRecordViewSDKMaxTime/self.totalSeconds * self.width;
-            if (ges.view.x + translation.x >= 0 && ges.view.x + translation.x < leftViewShouldX && ges.view.x + translation.x >= maxLeft) {
+            if (ges.view.x + translation.x >= 0 && ges.view.x + translation.x < leftViewShouldX) {
                 [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
                     make.left.mas_equalTo(ges.view.x + translation.x);
                 }];
-                NSLog(@"-----left normal max leftX = %f --------", ges.view.x + translation.x);
             }
             
             [ges setTranslation:CGPointZero inView:self];
@@ -292,18 +279,6 @@
                 return;
             }
             
-            if (diffSeconds > FMLRecordViewSDKMaxTime && translation.x > 0) {
-                diffSeconds = FMLRecordViewSDKMaxTime;
-                
-                self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", FMLRecordViewSDKMaxTime];
-                CGFloat rightX = CGRectGetMinX(self.leftDragView.frame) + diffSeconds / self.totalSeconds * self.width;
-                CGFloat leftX = self.width - rightX;
-                [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-                    make.right.mas_equalTo(-leftX);
-                }];
-                return;
-            }
-            
             //  计算关于两个拖拽view最小的间距
             CGFloat shouldDiffDis = self.minSeconds * self.width / self.totalSeconds;
             CGFloat leftMaxX = self.leftDragView.x;
@@ -311,14 +286,11 @@
             
             CGFloat resultX = CGRectGetMaxX(ges.view.frame)+ translation.x;
             CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
-            CGFloat maxRight = self.width - (self.leftDragView.frame.origin.x + FMLRecordViewSDKMaxTime/self.totalSeconds * self.width);
             
-            if (resultX <= self.width && resultX >leftViewShouldX && distance >= maxRight) {
-                
+            if (resultX <= self.width && resultX >leftViewShouldX) {
                 [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
                     make.right.mas_equalTo(-distance);
                 }];
-                NSLog(@"-----right normal max leftX = %f --------", -distance);
             }
             
             [ges setTranslation:CGPointZero inView:self];
@@ -351,6 +323,21 @@
     self.progressBarView.x = position;
     
     self.progressBarView.hidden = NO;
+}
+
+#pragma mark - UICollectionViewDataSource
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return self.collectionImages.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    FMLScaledImageViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:FMLScaledImageId forIndexPath:indexPath];
+    
+    cell.imageData = self.collectionImages[indexPath.item];
+    
+    return cell;
 }
 
 #pragma mark - 懒加载
@@ -392,6 +379,33 @@
     }
     
     return _clipSecondLabel;
+}
+
+- (NSMutableArray *)collectionImages
+{
+    if (!_collectionImages) {
+        _collectionImages = [NSMutableArray array];
+    }
+    
+    return _collectionImages;
+}
+
+- (UICollectionView *)collectionView
+{
+    if (!_collectionView) {
+        
+        UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
+        layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        layout.itemSize = CGSizeMake(FMLImagesVIewW, FMLImagesViewH);
+        layout.minimumLineSpacing = 0;
+        
+        CGRect collectionRect = CGRectMake(0, 0, kScreenWidth, FMLImagesViewH);
+        _collectionView = [[UICollectionView alloc] initWithFrame:collectionRect collectionViewLayout:layout];
+        _collectionView.dataSource = self;
+        [_collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([FMLScaledImageViewCell class]) bundle:nil] forCellWithReuseIdentifier:FMLScaledImageId];
+    }
+    
+    return _collectionView;
 }
 
 @end

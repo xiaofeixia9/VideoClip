@@ -11,6 +11,8 @@
 		2518FFF31D48CDBB00F8C649 /* AVAsset+FMLVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2518FFF21D48CDBB00F8C649 /* AVAsset+FMLVideo.m */; };
 		25587A681D508C3A0009E64F /* UIImage+FMLClipRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 25587A671D508C3A0009E64F /* UIImage+FMLClipRect.m */; };
 		25733EEC1D7970A300655DCD /* FMLPlayLayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 25733EEB1D7970A300655DCD /* FMLPlayLayerView.m */; };
+		25733EF21D797DAA00655DCD /* FMLScaledImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 25733EF01D797DAA00655DCD /* FMLScaledImageViewCell.m */; };
+		25733EF31D797DAA00655DCD /* FMLScaledImageViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25733EF11D797DAA00655DCD /* FMLScaledImageViewCell.xib */; };
 		2575646A1D49B9F800D58AB2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 257564691D49B9F800D58AB2 /* libz.tbd */; };
 		2575646D1D49E50800D58AB2 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 2575646C1D49E50800D58AB2 /* UIView+Extension.m */; };
 		9BE4DE0CA16A329A1BD588AC /* libPods-VideoClip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2257AA8BC7E1C9CECD1D4F03 /* libPods-VideoClip.a */; };
@@ -55,6 +57,9 @@
 		25587A671D508C3A0009E64F /* UIImage+FMLClipRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FMLClipRect.m"; sourceTree = "<group>"; };
 		25733EEA1D7970A300655DCD /* FMLPlayLayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLPlayLayerView.h; sourceTree = "<group>"; };
 		25733EEB1D7970A300655DCD /* FMLPlayLayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLPlayLayerView.m; sourceTree = "<group>"; };
+		25733EEF1D797DAA00655DCD /* FMLScaledImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMLScaledImageViewCell.h; sourceTree = "<group>"; };
+		25733EF01D797DAA00655DCD /* FMLScaledImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMLScaledImageViewCell.m; sourceTree = "<group>"; };
+		25733EF11D797DAA00655DCD /* FMLScaledImageViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FMLScaledImageViewCell.xib; sourceTree = "<group>"; };
 		257564691D49B9F800D58AB2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2575646B1D49E50800D58AB2 /* UIView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		2575646C1D49E50800D58AB2 /* UIView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
@@ -175,6 +180,9 @@
 				25587A671D508C3A0009E64F /* UIImage+FMLClipRect.m */,
 				25733EEA1D7970A300655DCD /* FMLPlayLayerView.h */,
 				25733EEB1D7970A300655DCD /* FMLPlayLayerView.m */,
+				25733EEF1D797DAA00655DCD /* FMLScaledImageViewCell.h */,
+				25733EF01D797DAA00655DCD /* FMLScaledImageViewCell.m */,
+				25733EF11D797DAA00655DCD /* FMLScaledImageViewCell.xib */,
 				B56105E21D432ECB00FFD1BD /* Supporting Files */,
 			);
 			path = VideoClip;
@@ -324,6 +332,7 @@
 				B56105F21D432ECB00FFD1BD /* LaunchScreen.storyboard in Resources */,
 				B56105EF1D432ECB00FFD1BD /* Assets.xcassets in Resources */,
 				B56106191D433EBE00FFD1BD /* FMLVideoChoiceCell.xib in Resources */,
+				25733EF31D797DAA00655DCD /* FMLScaledImageViewCell.xib in Resources */,
 				B56105ED1D432ECB00FFD1BD /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -397,6 +406,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25733EF21D797DAA00655DCD /* FMLScaledImageViewCell.m in Sources */,
 				B561061C1D434B2600FFD1BD /* FMLClipVideoViewController.m in Sources */,
 				B56105EA1D432ECB00FFD1BD /* FMLChoiceVideoController.m in Sources */,
 				B56105E71D432ECB00FFD1BD /* AppDelegate.m in Sources */,
