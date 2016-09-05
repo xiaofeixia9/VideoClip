@@ -24,6 +24,7 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
 @interface FMLClipFrameView () <UICollectionViewDataSource>
 
 @property (nonatomic, assign) Float64 totalSeconds;         ///< 总秒数
+@property (nonatomic, assign) Float64 screenSeconds;    ///< 当前屏幕显示的秒数
 @property (nonatomic, strong) AVAsset *asset;
 
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -168,8 +169,10 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
     NSUInteger imageCount = 0;
     if (self.totalSeconds <= FMLRecordViewSDKMaxTime) {
         imageCount = FMLMinImageCount;
+        self.screenSeconds = self.totalSeconds;
     } else {
         imageCount = self.totalSeconds * FMLMinImageCount / FMLRecordViewSDKMaxTime;
+        self.screenSeconds = FMLRecordViewSDKMaxTime;
     }
 
     __weak typeof(self) weakSelf = self;
@@ -207,6 +210,16 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
             
             // 1.控制最小间距
             CGPoint translation = [ges translationInView:self];
+            CGFloat maxX = CGRectGetMaxX(self.rightDragView.frame) - FMLRecordViewSDKMinTime / self.screenSeconds * self.width;
+            
+            NSLog(@"%f, %f", ges.view.x, translation.x);
+            if ((ges.view.x > maxX && translation.x > 0) || (ges.view.x < 0 && translation.x < 0)) {
+                return;
+            }
+            
+            [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.left.mas_offset(ges.view.x + translation.x);
+            }];
             
             [ges setTranslation:CGPointZero inView:self];
         } break;
