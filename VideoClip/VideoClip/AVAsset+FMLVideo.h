@@ -10,10 +10,6 @@
 
 @interface AVAsset (FMLVideo)
 
-// 属性
-@property (nonatomic, strong) AVAssetImageGenerator *imgGenerator;  //
-@property (nonatomic, strong) NSNumber *frameRate;  // fps
-
 /**
  *   获取每帧图片
  *
@@ -29,13 +25,5 @@
 
 /** 获取fps */
 - (float)fml_getFPS;
-
-/**
- *  将秒显示对应的缩略图
- *
- *  @param timeBySecond   需要返回的第几秒图片
- *  @param imageBackBlock 返回的图片s
- */
-- (void)fml_getThumbailImageRequestAtTimeSecond:(Float64)timeBySecond imageBackBlock:(void (^)(UIImage *))imageBackBlock;
 
 @end

@@ -239,7 +239,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     
     [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
         
-        [weakSelf.player seekToTime:CMTimeMakeWithSeconds(second, weakSelf.avAsset.fml_getFPS) toleranceBefore:kCMTimeIndefinite toleranceAfter:kCMTimeIndefinite];
+        [weakSelf.player seekToTime:CMTimeMakeWithSeconds(second, weakSelf.avAsset.fml_getFPS) toleranceBefore:kCMTimeIndefinite toleranceAfter:kCMTimeZero];
     }];
     
     [clipFrameView setDidEndDragLeftView:^(Float64 second) {    // 结束左边view拖拽
