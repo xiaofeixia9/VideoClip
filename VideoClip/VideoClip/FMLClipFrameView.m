@@ -27,14 +27,16 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
 @property (nonatomic, assign) Float64 screenSeconds;    ///< 当前屏幕显示的秒数
 @property (nonatomic, strong) AVAsset *asset;
 
+@property (nonatomic, assign) Float64 leftSecond;   ///< 左侧滑块代表的时间
+@property (nonatomic, assign) Float64 rightSecond;  ///< 右侧滑块代表的时间
+@property (nonatomic, assign) Float64 offsetSecond; ///< 偏移量时间
+
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSMutableArray *collectionImages;
 
 @property (nonatomic, strong) UILabel *startTimeLabel;  ///< 开始秒数
 @property (nonatomic, strong) UILabel *endTimeLabel;   ///< 结束秒数
 @property (nonatomic, strong) UILabel *clipSecondLabel; ///< 一共截多少秒
-
-//@property (nonatomic, strong) UIView *imagesView;   ///< 显示帧图片列表
 
 @property (nonatomic, strong) UIView *leftDragView;     ///< 左边时间拖拽view
 @property (nonatomic, strong) UIView *rightDragView;  ///< 右边时间拖拽view
@@ -163,9 +165,7 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
 
 - (void)initData
 {
-    // 现实秒数
     self.totalSeconds = [self.asset fml_getSeconds];
-    self.endTimeLabel.text = [self secondsToStr:self.totalSeconds];
     
     NSUInteger imageCount = 0;
     if (self.totalSeconds <= FMLRecordViewSDKMaxTime) {
@@ -177,7 +177,8 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
     }
     
     self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", self.screenSeconds];
-
+    self.endTimeLabel.text = [self secondsToStr:self.screenSeconds];
+    
     __weak typeof(self) weakSelf = self;
     [self.asset fml_getImagesCount:imageCount imageBackBlock:^(UIImage *image) {
         if (image) {
@@ -215,30 +216,32 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
             CGPoint translation = [ges translationInView:self];
             CGFloat maxX = CGRectGetMaxX(self.rightDragView.frame) - FMLRecordViewSDKMinTime / self.screenSeconds * self.width;
             
-            if ((ges.view.x + translation.x > maxX && translation.x > 0) || (ges.view.x + translation.x < 0 && translation.x < 0)) {
+            if ((ges.view.x > maxX && translation.x > 0) || (ges.view.x + translation.x < 0 && translation.x < 0)) {
                 return;
             }
             
-            [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.left.mas_offset(ges.view.x + translation.x);
-            }];
-            
-            [ges setTranslation:CGPointZero inView:self];
+            if (ges.view.x + translation.x <= maxX) {
+                [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.left.mas_offset(ges.view.x + translation.x);
+                }];
+                
+                [ges setTranslation:CGPointZero inView:self];
+            }
             
             // 2.计算leftDragView对应的时间
-            CGPoint offsetX = self.collectionView.contentOffset;
-            Float64 offsetSecond = offsetX.x / self.collectionView.contentSize.width * self.totalSeconds;
-            
-            Float64 leftSecond = ges.view.x / self.width * self.screenSeconds;
-            
-            Float64 leftTotalSecond = offsetSecond + leftSecond;
+            Float64 leftTotalSecond = [self getSecondsUsingView:ges.view];
             !self.didDragView ? : self.didDragView(leftTotalSecond);
             
             // 3.显示左边时间和截取时间
+            self.leftSecond = leftTotalSecond;
             self.startTimeLabel.text = [self secondsToStr:leftTotalSecond];
+            
+            Float64 clipSeconds = (CGRectGetMaxX(self.rightDragView.frame) - ges.view.x) / self.width * self.screenSeconds;
+            self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", clipSeconds];
         } break;
-        case UIGestureRecognizerStateEnded: {
-        } break;
+        case UIGestureRecognizerStateEnded:
+            !self.didEndDragLeftView ? : self.didEndDragLeftView(self.leftSecond);
+            break;
         default:
             break;
     }
@@ -258,46 +261,73 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
             // 1.控制最小间距
             CGFloat minX = CGRectGetMinX(self.leftDragView.frame) + FMLRecordViewSDKMinTime / self.screenSeconds * self.width;
             
-            if ((CGRectGetMaxX(ges.view.frame) + translation.x < minX && translation.x < 0) || (CGRectGetMaxX(ges.view.frame) + translation.x > self.width && translation.x > 0)) {
+            if ((CGRectGetMaxX(ges.view.frame) < minX && translation.x < 0) || (CGRectGetMaxX(ges.view.frame) + translation.x > self.width && translation.x > 0)) {
                 return;
             }
             
-            CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
-            [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.right.mas_offset(-distance);
-            }];
+            if (CGRectGetMaxX(ges.view.frame) + translation.x >=minX) {
+                CGFloat distance = self.width - (CGRectGetMaxX(ges.view.frame) + translation.x);
+                [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.right.mas_offset(-distance);
+                }];
+                
+                [ges setTranslation:CGPointZero inView:self];
+            }
             
-            [ges setTranslation:CGPointZero inView:self];
             
             // 2.计算leftDragView对应的时间
-            CGPoint offsetX = self.collectionView.contentOffset;
-            Float64 offsetSecond = offsetX.x / self.collectionView.contentSize.width * self.totalSeconds;
-            Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.screenSeconds;
+            Float64 rightTotalSecond = [self getSecondsUsingView:ges.view];
             
-            Float64 rightTotalSecond = rightSecond + offsetSecond;
             !self.didDragView ? : self.didDragView(rightTotalSecond);
             
             // 3.显示左边时间和截取时间
+            self.rightSecond = rightTotalSecond;
             self.endTimeLabel.text = [self secondsToStr:rightTotalSecond];
             
+            Float64 clipSeconds = (CGRectGetMaxX(ges.view.frame) - CGRectGetMinX(self.leftDragView.frame)) / self.width * self.screenSeconds;
+            self.clipSecondLabel.text = [NSString stringWithFormat:@"%.1f", clipSeconds];
         } break;
         case UIGestureRecognizerStateEnded: {
-            
+            !self.didEndDragRightView ? : self.didEndDragRightView(self.rightSecond);
         } break;
         default:
             break;
     }
 }
 
+#pragma mark - 事件处理
 - (void)resetProgressBarMode
 {
     self.progressBarView.hidden = YES;
 }
 
+- (Float64)getSecondsUsingView:(UIView *)view
+{
+    CGFloat offsetX = 0;
+    if (self.collectionView.contentOffset.x < 0) {
+        offsetX = 0;
+    } else {
+        offsetX = self.collectionView.contentOffset.x;
+    }
+    
+    Float64 offsetSecond = offsetX / self.collectionView.contentSize.width * self.totalSeconds;
+    
+    Float64 second = 0;
+    if (view == self.leftDragView) {
+        second = view.x / self.width * self.screenSeconds;
+    } else {
+        second = CGRectGetMaxX(view.frame) / self.width * self.screenSeconds;
+    }
+    
+    Float64 totalSecond = second + offsetSecond;
+    
+    return totalSecond;
+}
+
 #pragma mark - 进度条移动动画
 - (void)setProgressBarPoisionWithSecond:(Float64)second
 {
-    CGFloat position = self.width / self.totalSeconds * second;
+    CGFloat position = self.width / self.screenSeconds * (second - self.offsetSecond);
     self.progressBarView.x = position;
     
     self.progressBarView.hidden = NO;
@@ -316,6 +346,34 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
     cell.imageData = self.collectionImages[indexPath.item];
     
     return cell;
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    !self.didStartDragView ? : self.didStartDragView();
+    [self resetProgressBarMode];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    Float64 leftTime = [self getSecondsUsingView:self.leftDragView];
+    Float64 rightTime = [self getSecondsUsingView:self.rightDragView];
+    
+    self.startTimeLabel.text = [self secondsToStr:leftTime];
+    self.endTimeLabel.text = [self secondsToStr:rightTime];
+    
+    !self.didDragView ? : self.didDragView(leftTime);
+    
+    self.offsetSecond = scrollView.contentOffset.x / scrollView.contentSize.width * self.totalSeconds;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    Float64 leftTime = [self getSecondsUsingView:self.leftDragView];
+    Float64 rightTime = [self getSecondsUsingView:self.rightDragView];
+    
+    !self.didEndDragLeftView ? : self.didEndDragLeftView(leftTime);
+    !self.didEndDragRightView ? : self.didEndDragRightView(rightTime);
 }
 
 #pragma mark - 懒加载

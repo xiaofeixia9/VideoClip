@@ -21,6 +21,7 @@
 - (instancetype)initWithAsset:(AVAsset *)asset;
 
 - (void)resetProgressBarMode;
+
 - (void)setProgressBarPoisionWithSecond:(Float64)second;
 
 @end
