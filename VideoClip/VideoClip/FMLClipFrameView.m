@@ -212,8 +212,7 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
             CGPoint translation = [ges translationInView:self];
             CGFloat maxX = CGRectGetMaxX(self.rightDragView.frame) - FMLRecordViewSDKMinTime / self.screenSeconds * self.width;
             
-            NSLog(@"%f, %f", ges.view.x, translation.x);
-            if ((ges.view.x > maxX && translation.x > 0) || (ges.view.x < 0 && translation.x < 0)) {
+            if ((ges.view.x + translation.x > maxX && translation.x > 0) || (ges.view.x + translation.x < 0 && translation.x < 0)) {
                 return;
             }
             
@@ -241,12 +240,22 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
         case UIGestureRecognizerStateChanged: {
             CGPoint translation = [ges translationInView:self];
             
+            // 1.控制最小间距
+            CGFloat minX = CGRectGetMinX(self.leftDragView.frame) + FMLRecordViewSDKMinTime / self.screenSeconds * self.width;
+            
+            if ((ges.view.x + translation.x < minX && translation.x < 0) || (ges.view.x + translation.x > self.width && translation.x > 0)) {
+                return;
+            }
+            
+            CGFloat marginRight = self.width - (ges.view.x + translation.x);
+            [ges.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.right.mas_offset(-marginRight);
+            }];
+            
             [ges setTranslation:CGPointZero inView:self];
         } break;
         case UIGestureRecognizerStateEnded: {
-            Float64 rightSecond = CGRectGetMaxX(ges.view.frame) / self.width * self.totalSeconds;
-            !self.didEndDragRightView ? : self.didEndDragRightView(rightSecond);
-            self.endTimeLabel.text = [self secondsToStr:rightSecond];
+            
         } break;
         default:
             break;
