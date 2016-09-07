@@ -13,8 +13,7 @@
 #import <BlocksKit+UIKit.h>
 #import "UIImage+FMLClipRect.h"
 #import "FMLScaledImageViewCell.h"
-//#import "FMLClipFrameView.h"
-//#import "FMLFilterViewController.h"
+//#import "FMLRecordVideoSDK.h"
 
 #define FMLLineW 4                // 线宽
 #define FMLMinImageCount 8     // 显示的图片个数

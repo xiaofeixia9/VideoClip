@@ -127,15 +127,6 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
         make.left.right.mas_equalTo(self.view);
         make.height.mas_equalTo(self.view.mas_height);
     }];
-    
-    WEAKSELF
-    [self.view bk_whenTapped:^{
-        if (weakSelf.player.rate > 0) {
-            [weakSelf.player pause];
-        } else {
-            [weakSelf.player play];
-        }
-    }];
 }
 
 #pragma mark - 初始化数据
@@ -249,7 +240,7 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     }
 }
 
-#pragma mark FMLClipFrameView代理
+#pragma mark - FMLClipFrameView代理
 - (void)didStartDragView
 {
     if (self.player.rate > 0) { // 正在播放的时候
@@ -304,6 +295,23 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     
     [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    CGPoint touchPoint = [touches.anyObject locationInView:self.view];
+    
+    CGFloat videoY = CGRectGetMaxY(self.navBar.frame);
+    CGFloat videoH = kScreenHeight - self.navBar.height - self.clipFrameView.height;
+    CGRect videoRect = CGRectMake(0, videoY, kScreenWidth, videoH);
+    
+    if (CGRectContainsPoint(videoRect, touchPoint)) {
+        if (self.player.rate > 0) {
+            [self.player pause];
+        } else {
+            [self.player play];
+        }
+    }
 }
 
 #pragma mark - 监听状态
