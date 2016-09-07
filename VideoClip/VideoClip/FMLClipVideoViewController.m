@@ -15,11 +15,13 @@
 #import "FMLVideoCommand.h"
 #import "FMLPlayLayerView.h"
 #import "FMLClipFrameView.h"
+//#import "FMLFilterViewController.h"
+//#import "FMLRecordVideoSDK.h"
 
 #define navBarH 40
 #define clipFrameViewH 150
 
-@interface FMLClipVideoViewController ()
+@interface FMLClipVideoViewController () <FMLClipFrameViewDelegate>
 
 @property (nonatomic, strong) NSURL *assetUrl;
 @property (nonatomic, strong) AVAsset *avAsset;
@@ -223,35 +225,12 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
 - (void)setUpClipFrameView:(AVAsset *)asset
 {
     FMLClipFrameView *clipFrameView = [[FMLClipFrameView alloc] initWithAsset:asset];
+    clipFrameView.delegate = self;
     [self.view insertSubview:clipFrameView aboveSubview:self.playerView];
     self.clipFrameView = clipFrameView;
     [clipFrameView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.mas_equalTo(0);
         make.height.mas_equalTo(clipFrameViewH);
-    }];
-    
-    WEAKSELF
-    [clipFrameView setDidStartDragView:^{
-        if (weakSelf.player.rate > 0) { // 正在播放的时候
-            [weakSelf.player pause];
-        }
-    }];
-    
-    [clipFrameView setDidDragView:^(Float64 second) {   // 获取拖拽时的秒
-        
-        [weakSelf.player seekToTime:CMTimeMakeWithSeconds(second, weakSelf.avAsset.fml_getFPS) toleranceBefore:kCMTimeIndefinite toleranceAfter:kCMTimeIndefinite];
-    }];
-    
-    [clipFrameView setDidEndDragLeftView:^(Float64 second) {    // 结束左边view拖拽
-        weakSelf.startSecond = second;
-        
-        [weakSelf.player seekToTime:CMTimeMakeWithSeconds(second, weakSelf.avAsset.fml_getFPS) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
-    }];
-    
-    [clipFrameView setDidEndDragRightView:^(Float64 second) {   // 结束右边view拖拽
-        weakSelf.endSecond = second;
-        
-        [weakSelf.player seekToTime:CMTimeMakeWithSeconds(weakSelf.startSecond, weakSelf.avAsset.fml_getFPS) toleranceBefore:kCMTimeIndefinite toleranceAfter:kCMTimeIndefinite];
     }];
 }
 
@@ -268,6 +247,38 @@ static void *HJClipVideoLayerReadyForDisplay = &HJClipVideoLayerReadyForDisplay;
                                                   otherButtonTitles:nil];
         [alertView show];
     }
+}
+
+#pragma mark FMLClipFrameView代理
+- (void)didStartDragView
+{
+    if (self.player.rate > 0) { // 正在播放的时候
+        [self.player pause];
+    }
+}
+
+- (void)clipFrameView:(FMLClipFrameView *)clipFrameView didDragView:(Float64)second
+{
+    [self.player seekToTime:CMTimeMakeWithSeconds(second, self.avAsset.fml_getFPS) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+}
+
+- (void)clipFrameView:(FMLClipFrameView *)clipFrameView didEndDragLeftView:(Float64)second
+{
+    self.startSecond = second;
+    
+    [self.player seekToTime:CMTimeMakeWithSeconds(second, self.avAsset.fml_getFPS) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+}
+
+- (void)clipFrameView:(FMLClipFrameView *)clipFrameView didEndDragRightView:(Float64)second
+{
+    self.endSecond = second;
+    
+    [self.player seekToTime:CMTimeMakeWithSeconds(self.startSecond, self.avAsset.fml_getFPS) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+}
+
+- (void)clipFrameView:(FMLClipFrameView *)clipFrameView isScrolling:(BOOL)scrolling
+{
+    self.view.userInteractionEnabled = !scrolling;
 }
 
 #pragma mark - 事件

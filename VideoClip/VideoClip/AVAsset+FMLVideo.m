@@ -10,9 +10,6 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
-static void *cImgGenerator = &cImgGenerator;
-static void *cFrameRate = &cFrameRate;
-
 @implementation AVAsset (FMLVideo)
 
 - (void)fml_getImagesCount:(NSUInteger)imageCount imageBackBlock:(void (^)(UIImage *))imageBackBlock
