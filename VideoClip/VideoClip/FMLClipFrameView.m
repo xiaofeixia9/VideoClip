@@ -197,9 +197,13 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
 - (NSString *)secondsToStr:(Float64)seconds
 {
     NSInteger secondI = (NSInteger) seconds;
-    NSInteger second = floor(secondI % 60);
-    NSInteger minute = floor((secondI / 60) % secondI);
-    return [NSString stringWithFormat:@"%02ld:%02ld", minute, second];
+    if (!secondI) {
+        return @"00:00";
+    } else {
+        NSInteger second = floor(secondI % 60);
+        NSInteger minute = floor((secondI / 60) % secondI);
+        return [NSString stringWithFormat:@"%02ld:%02ld", minute, second];
+    }
 }
 
 #pragma mark - 拖拽事件
@@ -229,6 +233,8 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
                 }];
                 
                 [ges setTranslation:CGPointZero inView:self];
+                
+                [self layoutIfNeeded];
             }
             
             // 2.计算leftDragView对应的时间
@@ -334,6 +340,34 @@ static NSString * const FMLScaledImageId = @"FMLScaledImageId";
     Float64 totalSecond = second + offsetSecond;
     
     return totalSecond;
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    // leftDragView和rightDragView 1.5倍高度矩形区域成为拖拽区域
+    
+    // 计算leftDragView矩形拖拽区域
+    CGFloat leftDragWH = self.leftDragView.height * 1.5;
+    CGFloat leftDragX = self.leftDragView.center.x - leftDragWH * 0.5;
+    CGFloat leftDragY = self.leftDragView.center.y - leftDragWH * 0.5;
+    
+    CGRect leftDragVRect = CGRectMake(leftDragX, leftDragY, leftDragWH, leftDragWH);
+    
+    // 计算rightDragView矩形拖拽区域
+    CGFloat rightDragWH = self.rightDragView.height * 1.5;
+    CGFloat rightDragX = self.rightDragView.center.x - rightDragWH * 0.5;
+    CGFloat rightDragY = self.rightDragView.center.y - rightDragWH * 0.5;
+    
+    CGRect rightDragVRect = CGRectMake(rightDragX, rightDragY, rightDragWH, rightDragWH);
+    
+    if (CGRectContainsPoint(leftDragVRect, point)) {
+        return self.leftDragView;
+    } else if (CGRectContainsPoint(rightDragVRect, point)) {
+        return self.rightDragView;
+    } else {
+        return [super hitTest:point withEvent:event];
+    }
+    
 }
 
 #pragma mark - 进度条移动动画
