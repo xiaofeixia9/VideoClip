@@ -1,3 +1,3 @@
 # VideoClip
 简单的视频裁剪demo
-![image](https://github.com/xiaofeixia9/VideoClip/tree/master/VideoClip/demo.png)
+![Demo预览](https://github.com/xiaofeixia9/VideoClip/blob/master/VideoClip/demo.png)
